@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1771576946748,
+      "tag": "0000_curly_mentor",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1771577077329,
+      "tag": "0001_concerned_toxin",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771581238066,
+      "tag": "0002_tidy_avengers",
+      "breakpoints": true
+    }
+  ]
+}
