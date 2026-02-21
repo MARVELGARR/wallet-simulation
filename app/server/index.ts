@@ -1,22 +1,20 @@
+import "dotenv/config"; // loads .env before anything else runs
 
-
-
-
-import { router } from "../settings/router.config.js";
 import { app } from "../settings/app.config.js";
+import { userRouter } from "../routers/user.controller.js";
 
-app.use(router)
-app.use("api/v1")
+// Mount the user/auth routes under the versioned API prefix
+// All routes inside userRouter will be accessible at /api/v1/...
+// e.g. POST /api/v1/auth/register
+app.use("/api/v1", userRouter);
 
-const Start = () => {
+// ── Start the HTTP server ────────────────────────────────────
+const PORT = Number(process.env.PORT) || 3000;
 
-    app.listen(3000, () => {
-        console.log("i don start")
-    })
-}
-Start()
+const start = () => {
+    app.listen(PORT, () => {
+        console.log(`[server] Running on http://localhost:${PORT}`);
+    });
+};
 
-router.get('/', (res, req) => {
-    req.send("i don start o")
-})
-
+start();
