@@ -4,6 +4,7 @@
 import { Request, Response } from "express";
 import { router } from "../settings/router.config.js";
 import { RegisterUser } from "../services/auth-service/register.auth.js";
+import { login } from "../services/auth-service/login.auth.js";
 
 // ─────────────────────────────────────────────────────────────
 // USER CONTROLLER
@@ -37,7 +38,6 @@ router.post(
         try {
             // Pass the raw request body directly to the service.
             // The service validates it with Zod — the controller trusts nothing.
-            console.log(req.body)
             const result = await RegisterUser(req.body);
 
             if (!result.success) {
@@ -78,6 +78,48 @@ router.post(
         }
     }
 );
+
+router.post("/auth/login", async (req: Request, res: Response): Promise<void> => {
+    try {
+        const result = await login(req.body)
+
+        if(!result.success){
+            const isValidationError = result.error === "Validation failed";
+            const isUserNotFound = result.error === "User not found";
+            const isInvalidCredentials = result.error === "Invalid credentials";
+            const isInternalError = result.error === "An unexpected error occurred. Please try again later.";
+
+            const statusCode = isValidationError
+                ? 400  // Bad Request
+                : isUserNotFound
+                    ? 404  // Not Found
+                    : isInvalidCredentials
+                        ? 401  // Unauthorized
+                        : isInternalError
+                            ? 500  // Internal Server Error (unexpected)
+                            : 500; // Internal Server Error (unexpected)
+
+            res.status(statusCode).json({
+                success: false,
+                error:   result.error,
+                // `details` only present for validation errors, not for internal ones
+                ...(result.details ? { details: result.details } : {}),
+            });
+            return;
+        }
+
+        res.status(200).json({
+            success: true,
+            data:    result.data, // { user: { id, name, email }, token }
+        });
+    } catch (error) {
+        console.error("[user.controller] Unhandled error in /auth/login:", error);
+        res.status(500).json({
+            success: false,
+            error: "An unexpected error occurred. Please try again later.",
+        });
+    }
+})
 
 
 // ─────────────────────────────────────────────────────────────
