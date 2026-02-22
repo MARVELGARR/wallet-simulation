@@ -69,7 +69,8 @@ export const RegisterUser = async (
 
     // ── Step 1: Validate ────────────────────────────────────
     const parsed = registerUserSchema.safeParse(rawInput);
-
+    // console.log(JSON.stringify(parsed))
+    
     if (!parsed.success) {
         return {
             success: false,

@@ -1,3 +1,6 @@
+
+
+
 import { Request, Response } from "express";
 import { router } from "../settings/router.config.js";
 import { RegisterUser } from "../services/auth-service/register.auth.js";
@@ -34,6 +37,7 @@ router.post(
         try {
             // Pass the raw request body directly to the service.
             // The service validates it with Zod — the controller trusts nothing.
+            console.log(req.body)
             const result = await RegisterUser(req.body);
 
             if (!result.success) {
