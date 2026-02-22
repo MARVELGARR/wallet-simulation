@@ -1,6 +1,8 @@
 import z from "zod";
 import { comparePassword } from "./bcrypt.util.js";
 import { findUserByEmail } from "../../data-access-layer/user/user.js";
+import { signToken } from "./jwt.util.js";
+
 
 
 
@@ -44,12 +46,22 @@ export const login = async (rawInput: LoginProp) => {
     const isPassword = await comparePassword(password, user.data.password)
 
     if(isPassword){
+        // Sign a JWT for the authenticated session
+        const token = signToken({
+            sub: user.data.id,
+            email: user.data.email,
+            name: user.data.name,
+        });
+
         return {
             success: true,
             data: {
-                id: user.data.id,
-                name: user.data.name,
-                email: user.data.email,
+                user: {
+                    id: user.data.id,
+                    name: user.data.name,
+                    email: user.data.email,
+                },
+                token
             }
         }
     }
