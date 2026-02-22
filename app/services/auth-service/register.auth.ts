@@ -3,8 +3,7 @@ import { Registration } from "../../data-access-layer/auth/auth.js";
 import { hashPassword } from "./bcrypt.util.js";
 import { signToken } from "./jwt.util.js";
 
-// JWT_SECRET validation and bcrypt config now live in their own
-// utility modules (jwt.util.ts / bcrypt.util.ts).
+
 
 // ─────────────────────────────────────────────────────────────
 // ZOD SCHEMA — Input validation
@@ -15,7 +14,7 @@ export const registerUserSchema = z.object({
     name: z
         .string({ error: "Name is required" })
         .min(2, { message: "Name must be at least 2 characters" })
-        .max(50, { message: "Name must be at most 50 characters" })
+        .max(5, { message: "Name must be at most 5 characters" })
         .trim(),
 
     email: z
@@ -40,6 +39,7 @@ export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 //   if (result.success) { result.data ... }  ← TypeScript knows data exists
 //   if (!result.success) { result.error ... } ← TypeScript knows error exists
 // ─────────────────────────────────────────────────────────────
+
 type ServiceSuccess<T> = { success: true; data: T };
 type ServiceError = { success: false; error: string; details?: unknown };
 type ServiceResult<T> = ServiceSuccess<T> | ServiceError;

@@ -1,4 +1,6 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv"
+dotenv.config();
 
 // ─────────────────────────────────────────────────────────────
 // JWT CONFIG
@@ -6,7 +8,7 @@ import jwt from "jsonwebtoken";
 // settings without duplicating them.
 // ─────────────────────────────────────────────────────────────
 const JWT_EXPIRES_IN = "7d";
-const JWT_ISSUER = "tobedeleted-api";
+const JWT_ISSUER = process.env.JWT_ISSUER || "Wallet-api";
 
 // Read secret once at module load so a missing secret crashes
 // the server immediately rather than on the first request.
