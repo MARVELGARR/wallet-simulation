@@ -79,6 +79,21 @@ npm run dev
 - `POST /api/v1/auth/login` - Authenticate and receive access and refresh tokens.
 - `POST /api/v1/auth/refresh` - Swap a refresh token for a new access/refresh pair (token rotation).
 - `POST /api/v1/auth/logout` - Revoke a refresh token and end the session.
+- `GET /api/v1/auth/me` - [Protected] Retrieve current user's profile information.
+
+### 🔒 Security & Middleware
+#### Authentication Middleware (`requireAuth`)
+Protect any route by adding the `requireAuth` middleware. It automatically:
+1. Validates the `Authorization: Bearer <token>` header.
+2. Attaches the decoded user payload to `req.user`.
+
+```typescript
+import { requireAuth } from "../services/auth-service/auth.middleware.js";
+
+router.get("/protected-route", requireAuth, (req, res) => {
+    // req.user is now available
+});
+```
 
 ---
 
