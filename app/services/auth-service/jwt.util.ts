@@ -4,14 +4,11 @@ dotenv.config();
 
 // ─────────────────────────────────────────────────────────────
 // JWT CONFIG
-// Centralised here so every auth-related file shares the same
-// settings without duplicating them.
 // ─────────────────────────────────────────────────────────────
-const JWT_EXPIRES_IN = "7d";
+const ACCESS_TOKEN_EXPIRES_IN = "15m"; // Short-lived
+const REFRESH_TOKEN_EXPIRES_IN = "7d"; // Long-lived
 const JWT_ISSUER = process.env.JWT_ISSUER || "Wallet-api";
 
-// Read secret once at module load so a missing secret crashes
-// the server immediately rather than on the first request.
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
     throw new Error(
@@ -27,28 +24,35 @@ export interface JwtPayload {
 }
 
 /**
- * Signs a JWT for the given user payload.
- *
- * @param payload - Non-sensitive user fields to embed in the token.
- * @returns A signed JWT string.
- * @throws If signing fails (e.g. invalid secret format).
+ * Signs an ACCESS token (short-lived).
  */
-export const signToken = (payload: JwtPayload): string => {
+export const signAccessToken = (payload: JwtPayload): string => {
     return jwt.sign(payload, JWT_SECRET as string, {
-        expiresIn: JWT_EXPIRES_IN,
+        expiresIn: ACCESS_TOKEN_EXPIRES_IN,
         issuer: JWT_ISSUER,
     });
 };
 
 /**
- * Verifies and decodes a JWT string.
- * Throws a `JsonWebTokenError` or `TokenExpiredError` if invalid.
- *
- * @param token - The raw JWT string from the request.
- * @returns The decoded payload.
+ * Signs a REFRESH token (long-lived).
+ */
+export const signRefreshToken = (payload: JwtPayload): string => {
+    return jwt.sign(payload, JWT_SECRET as string, {
+        expiresIn: REFRESH_TOKEN_EXPIRES_IN,
+        issuer: JWT_ISSUER,
+    });
+};
+
+/**
+ * Verifies and decodes a JWT string (works for both access and refresh).
  */
 export const verifyToken = (token: string): JwtPayload => {
     return jwt.verify(token, JWT_SECRET as string, {
         issuer: JWT_ISSUER,
     }) as unknown as JwtPayload;
 };
+
+// Deprecated: keeping signToken for backward compatibility during transition
+// but it now behaves like signAccessToken.
+/** @deprecated Use signAccessToken or signRefreshToken instead */
+export const signToken = signAccessToken;

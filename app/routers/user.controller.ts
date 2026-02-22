@@ -5,6 +5,9 @@ import { Request, Response } from "express";
 import { router } from "../settings/router.config.js";
 import { RegisterUser } from "../services/auth-service/register.auth.js";
 import { login } from "../services/auth-service/login.auth.js";
+import { RefreshSession } from "../services/auth-service/refresh.auth.js";
+import { Logout } from "../services/auth-service/logout.auth.js";
+import { requireAuth, AuthenticatedRequest } from "../services/auth-service/auth.middleware.js";
 
 // ─────────────────────────────────────────────────────────────
 // USER CONTROLLER
@@ -26,7 +29,8 @@ import { login } from "../services/auth-service/login.auth.js";
 //   { "name": "...", "email": "...", "password": "..." }
 //
 // Responses:
-//   201 Created  → { success: true, data: { user, token } }
+// Responses:
+//   201 Created  → { success: true, data: { user, accessToken, refreshToken } }
 //   400 Bad Req. → { success: false, error: "...", details?: {} }
 //   409 Conflict → { success: false, error: "email already exists" }
 //   500 Internal → { success: false, error: "..." }
@@ -110,7 +114,7 @@ router.post("/auth/login", async (req: Request, res: Response): Promise<void> =>
 
         res.status(200).json({
             success: true,
-            data:    result.data, // { user: { id, name, email }, token }
+            data:    result.data, // { user: { id, name, email }, accessToken, refreshToken }
         });
     } catch (error) {
         console.error("[user.controller] Unhandled error in /auth/login:", error);
@@ -120,6 +124,70 @@ router.post("/auth/login", async (req: Request, res: Response): Promise<void> =>
         });
     }
 })
+
+// ── Role: POST /api/v1/auth/refresh ──────────────────────────
+// Refreshes the session by issuing a new access token.
+router.post("/auth/refresh", async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { refreshToken } = req.body;
+
+        if (!refreshToken) {
+            res.status(400).json({ success: false, error: "Refresh token is required." });
+            return;
+        }
+
+        const result = await RefreshSession(refreshToken);
+
+        if (!result.success) {
+            res.status(401).json({ success: false, error: result.error });
+            return;
+        }
+
+        res.status(200).json({
+            success: true,
+            data:    result.data, // { accessToken, refreshToken }
+        });
+    } catch (error) {
+        console.error("[user.controller] Unhandled error in /auth/refresh:", error);
+        res.status(500).json({ success: false, error: "An unexpected error occurred." });
+    }
+});
+
+// ── Role: POST /api/v1/auth/logout ───────────────────────────
+// Revokes the session by invalidating the refresh token.
+router.post("/auth/logout", async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { refreshToken } = req.body;
+
+        if (!refreshToken) {
+            res.status(400).json({ success: false, error: "Refresh token is required." });
+            return;
+        }
+
+        const result = await Logout(refreshToken);
+
+        if (!result.success) {
+            res.status(400).json({ success: false, error: result.error });
+            return;
+        }
+
+        res.status(200).json({ success: true, message: "Logged out successfully." });
+    } catch (error) {
+        console.error("[user.controller] Unhandled error in /auth/logout:", error);
+        res.status(500).json({ success: false, error: "An unexpected error occurred." });
+    }
+});
+
+// ── Role: GET /api/v1/auth/me ────────────────────────────────
+// Returns the profile data for the currently authenticated user.
+router.get("/auth/me", requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    // requireAuth guarantees that req.user is populated.
+    res.status(200).json({
+        success: true,
+        data:    req.user,
+    });
+});
+
 
 
 // ─────────────────────────────────────────────────────────────

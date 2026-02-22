@@ -1,6 +1,5 @@
 
-
-import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, boolean, integer } from "drizzle-orm/pg-core";
 
 /**
  * `users` table — stores registered user accounts.
@@ -16,13 +15,28 @@ export const users = pgTable("users", {
 });
 
 /**
+ * `refreshTokens` table — stores valid refresh tokens for active sessions.
+ * Allows for session revocation (logout) and long-lived sessions.
+ */
+export const refreshTokens = pgTable("refresh_tokens", {
+    id:        serial("id").primaryKey(),
+    userId:    integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+    token:     text("token").notNull().unique(),
+    expiresAt: timestamp("expires_at").notNull(),
+    revoked:   boolean("revoked").notNull().default(false),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+/**
  * wallet table — placeholder for future implementation.
  */
 export const wallet = pgTable("wallet", {
     id:     serial("id").primaryKey(),
-    userId: serial("user_id").notNull().references(() => users.id), // FK → users
+    userId: integer("user_id").notNull().references(() => users.id), // FK → users
 });
 
 // Export a convenience type for a selected user row
 export type UserSelect = typeof users.$inferSelect;
 export type UserInsert = typeof users.$inferInsert;
+export type RefreshTokenSelect = typeof refreshTokens.$inferSelect;
+export type RefreshTokenInsert = typeof refreshTokens.$inferInsert;

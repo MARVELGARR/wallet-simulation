@@ -1,7 +1,8 @@
 import z from "zod";
 import { Registration } from "../../data-access-layer/auth/auth.js";
 import { hashPassword } from "./bcrypt.util.js";
-import { signToken } from "./jwt.util.js";
+import { signAccessToken, signRefreshToken } from "./jwt.util.js";
+import { saveRefreshToken } from "../../data-access-layer/auth/refresh-token.js";
 
 
 
@@ -51,7 +52,8 @@ interface RegisterSuccessPayload {
         name: string;
         email: string;
     };
-    token: string;
+    accessToken: string;
+    refreshToken: string;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -105,23 +107,36 @@ export const RegisterUser = async (
 
     const newUser = dbResult.data;
 
-    // ── Step 4: Sign a JWT ───────────────────────────────────
-    // We embed non-sensitive fields in the payload.
-    // NEVER put the password (even hashed) inside a JWT.
-    let token: string;
+    // ── Step 4: Sign tokens ───────────────────────────────────
+    // We sign both a short-lived access token and a long-lived refresh token.
+    let accessToken: string;
+    let refreshToken: string;
     try {
-        token = signToken({
-            sub: newUser.id,      // subject = user ID (standard JWT claim)
+        accessToken = signAccessToken({
+            sub: newUser.id,
             email: newUser.email,
             name: newUser.name,
         });
+
+        refreshToken = signRefreshToken({
+            sub: newUser.id,
+            email: newUser.email,
+            name: newUser.name,
+        });
+
+        // Persist refresh token in DB
+        await saveRefreshToken({
+            userId: newUser.id,
+            token: refreshToken,
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+        });
+
     } catch (err) {
-        console.error("[auth-service] JWT signing failed:", err);
+        console.error("[auth-service] Token generation failed:", err);
         return { success: false, error: "Could not generate session token. Please try again." };
     }
 
     // ── Step 5: Return success with sanitised user data ──────
-    // We deliberately exclude the hashed password from the response.
     return {
         success: true,
         data: {
@@ -130,7 +145,8 @@ export const RegisterUser = async (
                 name: newUser.name,
                 email: newUser.email,
             },
-            token,
+            accessToken,
+            refreshToken
         },
     };
 };

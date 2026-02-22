@@ -11,7 +11,7 @@ A modern, type-safe authentication and user management system built with Node.js
 - **Validation**: [Zod](https://zod.dev/)
 - **Security**:
   - [bcrypt](https://www.npmjs.com/package/bcrypt) for password hashing
-  - [JWT (JSON Web Tokens)](https://jwt.io/) for session management
+  - [JWT (JSON Web Tokens)](https://jwt.io/) for session management (Access & Refresh tokens)
 - **Development**: [tsx](https://tsx.is/) (watch mode), [TypeScript](https://www.typescriptlang.org/)
 
 ## 🏗️ Architecture
@@ -75,8 +75,10 @@ npm run dev
 ## 🛣️ API Endpoints (v1)
 
 ### Authentication
-- `POST /api/v1/auth/register` - Create a new user account.
-- `POST /api/v1/auth/login` - Authenticate and receive a JWT.
+- `POST /api/v1/auth/register` - Create a new user account. Returns access and refresh tokens.
+- `POST /api/v1/auth/login` - Authenticate and receive access and refresh tokens.
+- `POST /api/v1/auth/refresh` - Swap a refresh token for a new access/refresh pair (token rotation).
+- `POST /api/v1/auth/logout` - Revoke a refresh token and end the session.
 
 ---
 
