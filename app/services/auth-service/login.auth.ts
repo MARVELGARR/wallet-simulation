@@ -3,6 +3,7 @@ import { comparePassword } from "./bcrypt.util.js";
 import { findUserByEmail } from "../../data-access-layer/user/user.js";
 import { signAccessToken, signRefreshToken } from "./jwt.util.js";
 import { saveRefreshToken } from "../../data-access-layer/auth/refresh-token.js";
+import { publish } from "../../events/publisher.js";
 
 
 
@@ -72,6 +73,14 @@ export const login = async (rawInput: LoginProp) => {
             console.error("[login.service] Failed to save refresh token:", err);
             return { success: false, error: "Authentication failed due to session error." };
         }
+
+        // ── Publish domain event ────────────────────────────────
+        // Fire-and-forget: consumers handle audit log, last-seen, etc.
+        publish("user.logged_in", {
+            userId:     String(user.data.id),
+            email:      user.data.email,
+            loggedInAt: new Date().toISOString(),
+        });
 
         return {
             success: true,
