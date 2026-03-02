@@ -3,7 +3,7 @@ import { Registration } from "../../data-access-layer/auth/auth.js";
 import { hashPassword } from "./bcrypt.util.js";
 import { signAccessToken, signRefreshToken } from "./jwt.util.js";
 import { saveRefreshToken } from "../../data-access-layer/auth/refresh-token.js";
-import { publish } from "../../events/publisher.js";
+
 
 
 
@@ -137,17 +137,7 @@ export const RegisterUser = async (
         return { success: false, error: "Could not generate session token. Please try again." };
     }
 
-    // ── Step 5: Publish domain event ─────────────────────────
-    // Fire-and-forget: the auth consumer will handle side effects
-    // (welcome email, wallet provisioning, audit log, etc.)
-    publish("user.registered", {
-        userId:       String(newUser.id),
-        name:         newUser.name,
-        email:        newUser.email,
-        registeredAt: new Date().toISOString(),
-    });
-
-    // ── Step 6: Return success with sanitised user data ──────
+    // ── Step 5: Return success with sanitised user data ──────
     return {
         success: true,
         data: {
