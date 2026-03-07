@@ -3,6 +3,7 @@ import { Registration } from "../../data-access-layer/auth/auth.js";
 import { hashPassword } from "./bcrypt.util.js";
 import { signAccessToken, signRefreshToken } from "./jwt.util.js";
 import { saveRefreshToken } from "../../data-access-layer/auth/refresh-token.js";
+import { client } from "../../settings/upstach.qstach.config.js";
 
 
 
@@ -97,6 +98,7 @@ export const RegisterUser = async (
 
     // ── Step 3: Persist user via the data-access layer ──────
     const dbResult = await Registration({ name, email, password: hashedPassword });
+
 
     if (!dbResult.success) {
         // dbResult carries a specific error code we can react to

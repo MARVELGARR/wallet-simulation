@@ -2,9 +2,9 @@
 import "dotenv/config"; // loads .env before anything else runs
 
 import { app } from "../settings/app.config.js";
-import { userRouter } from "../routers/user.controller.js";
 import express from "express";
 import { router } from "../settings/router.config.js";
+import { userRouter } from "../routers/auth.controller.js";
 
 // ── Middleware ────────────────────────────────────────────────
 app.use(express.json());
