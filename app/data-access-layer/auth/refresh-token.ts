@@ -7,7 +7,7 @@ import { db } from "../../settings/db.config.js";
 // ─────────────────────────────────────────────────────────────
 
 export interface NewRefreshToken {
-    userId:    number;
+    userId:    string;
     token:     string;
     expiresAt: Date;
 }
@@ -50,7 +50,7 @@ export const revokeRefreshToken = async (token: string) => {
 /**
  * Revokes all refresh tokens for a specific user (global logout).
  */
-export const revokeAllUserTokens = async (userId: number) => {
+export const revokeAllUserTokens = async (userId: string) => {
     return await db
         .update(refreshTokens)
         .set({ revoked: true })
