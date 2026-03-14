@@ -50,7 +50,7 @@ type ServiceResult<T> = ServiceSuccess<T> | ServiceError;
 // Shape of the data we return to the controller on success
 interface RegisterSuccessPayload {
     user: {
-        id: number;
+        id: string;
         name: string;
         email: string;
     };

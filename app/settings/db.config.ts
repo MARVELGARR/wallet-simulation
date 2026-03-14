@@ -1,7 +1,7 @@
 import { Pool } from "pg"
 import dotenv from "dotenv"
 import { drizzle } from "drizzle-orm/node-postgres"
-import { DATABASE_CREDENTIALS } from "./constant"
+import { DATABASE_CREDENTIALS } from "./constant.js"
 dotenv.config()
 
 const pool = new Pool({

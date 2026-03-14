@@ -18,7 +18,7 @@ if (!JWT_SECRET) {
 
 // Payload shape for tokens issued by this API.
 export interface JwtPayload {
-    sub: number;   // user ID
+    sub: string;   // user ID
     email: string;
     name: string;
 }

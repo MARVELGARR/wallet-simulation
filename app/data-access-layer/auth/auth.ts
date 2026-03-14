@@ -29,7 +29,7 @@ type DalResult<T> = DalSuccess<T> | DalError;
 // ─────────────────────────────────────────────────────────────
 export const Registration = async (
     userData: NewUserData
-): Promise<DalResult<{ id: number; name: string; email: string }>> => {
+): Promise<DalResult<{ id: string; name: string; email: string }>> => {
 
     // ── Guard: check if email is already registered ──────────
     // We check before insert to return a clean, actionable error code.

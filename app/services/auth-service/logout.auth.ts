@@ -27,7 +27,7 @@ export const Logout = async (
  * Revokes all sessions for a user.
  */
 export const LogoutAll = async (
-    userId: number
+    userId: string
 ): Promise<ServiceResult> => {
     try {
         await revokeAllUserTokens(userId);
