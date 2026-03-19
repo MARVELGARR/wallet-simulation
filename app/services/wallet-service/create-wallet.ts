@@ -8,24 +8,18 @@ export type DalResult<T> = DalSuccess<T> | DalError;
 
 
 
-export const Create_Wallet_Services = async ({email,id, name}:CreateWalletPropIn): Promise<DalResult<{
-    id: string;
-    currency: string;
-    balance: string;
-    updatedAt: Date;
-}>> =>{
-
-    try{
-        const newWallet = await CreateWallet_Dal({email, id, name})
-        if (!newWallet[0]) {
-            // INSERT returned no rows — unexpected, but we handle it defensively
-            console.error("[wallet-dal] Insert succeeded but returned no rows.");
-            return { success: false, error: "User wallet creation returned no data.", code: "DB_NO_RESULT" };
-        }   
-        return { success: true, data: newWallet[0]}
-
-    }catch(error){
-        console.error("[wallet-dal] DB error during user wallet insert:", error);
-        return { success: false, error: "Failed to create user wallet.", code: "DB_ERROR" };
+export const Create_Wallet_Services = async (input: CreateWalletPropIn): Promise<DalResult<CreateWalletDalPromise>> => {
+    try {
+        const newWallet = await CreateWallet_Dal(input);
+        
+        if (!newWallet || newWallet.length === 0) {
+            return { success: false, error: "Wallet creation failed: No data returned.", code: "DB_EMPTY_RESULT" };
+        }
+        
+        return { success: true, data: newWallet[0] };
+    } catch (error) {
+        // Log the actual error for debugging, return a friendly message to the UI
+        console.error("[Wallet_Service] Critical Error:", error);
+        return { success: false, error: "Internal server error during wallet creation.", code: "INTERNAL_ERROR" };
     }
-}
+};

@@ -6,23 +6,34 @@ import { Create_Wallet_Services } from "../services/wallet-service/create-wallet
 
 
 
-router.post('/create-wallet', async (req: Request, res: Response)=>{
+router.post('/create-wallet', async (req: Request, res: Response) => {
+    try {
+        // 1. Basic Validation (In industry, use Zod here)
+        const { id, name, email } = req.body;
+        if (!id) return res.status(400).json({ success: false, error: "User ID is required" });
 
-    const data = await req.body
+        // 2. Call Service
+        const result = await Create_Wallet_Services({ id, name, email });
 
-    await Create_Wallet_Services(data).then((data)=>{
-        
-        if(data.success){
-            
-            res.status(201).json({
-                    success: true,
-                    data: data.data, // { user: { id, name, email }, token }
-                });
+        // 3. Handle Service Result
+        if (result.success) {
+            return res.status(201).json({
+                success: true,
+                data: result.data,
+            });
         }
-    }).catch((error)=>{
-        res.status(500).json({
+
+        // 4. Handle Service Failure (e.g., DB unique constraint)
+        return res.status(400).json({
             success: false,
-            error: error.error
-        })
-    })
-})
+            error: result.error,
+        });
+
+    } catch (criticalError) {
+        // This catches things the service didn't catch (like network loss)
+        return res.status(500).json({
+            success: false,
+            error: "An unexpected error occurred."
+        });
+    }
+});
