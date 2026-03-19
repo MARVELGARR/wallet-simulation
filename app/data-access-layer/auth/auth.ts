@@ -16,9 +16,9 @@ interface NewUserData {
 
 // DAL response uses a discriminated union — lets callers do proper
 // type-safe error handling without throwing exceptions across layers.
-type DalSuccess<T> = { success: true; data: T };
-type DalError    = { success: false; error: string; code?: string };
-type DalResult<T> = DalSuccess<T> | DalError;
+export type DalSuccess<T> = { success: true; data: T };
+export type DalError    = { success: false; error: string; code?: string };
+export type DalResult<T> = DalSuccess<T> | DalError;
 
 // ─────────────────────────────────────────────────────────────
 // Registration — inserts a new user row, checks for duplicates
