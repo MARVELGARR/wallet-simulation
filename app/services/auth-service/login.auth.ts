@@ -32,7 +32,7 @@ export const login = async (rawInput: LoginProp) => {
         return {
             success: false,
             error: "Validation failed",
-            details: parsed.error.flatten().fieldErrors, // field-level errors for the frontend
+            details: z.treeifyError(parsed.error).errors, // field-level errors for the frontend
         };
     }
 

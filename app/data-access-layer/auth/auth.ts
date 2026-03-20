@@ -1,3 +1,5 @@
+
+
 import { eq } from "drizzle-orm";
 import { users } from "../../database/schema.js";
 import { db } from "../../settings/db.config.js";
@@ -40,7 +42,7 @@ export const Registration = async (
         existing = await db
             .select({ id: users.id })
             .from(users)
-            .where(eq(users.email, userData.email))
+            .where(eq (users.email, userData.email))
             .limit(1);
     } catch (err) {
         console.error("[auth-dal] DB error during email uniqueness check:", err);

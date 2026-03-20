@@ -1,7 +1,8 @@
+import { eq } from "drizzle-orm/pg-core/expressions";
 import { wallets } from "../../database/schema.js";
 import { db } from "../../settings/db.config.js";
 
-export type CreateWalletPropIn={
+export type WalletPropIn={
     id: string;
     name: string;
     email: string;
@@ -15,7 +16,7 @@ export type CreateWalletDalPromise = {
 }
 
 
-export const CreateWallet_Dal = async ({id}:CreateWalletPropIn): Promise<CreateWalletDalPromise[]> =>{
+export const CreateWallet_Dal = async ({id}:WalletPropIn): Promise<CreateWalletDalPromise[]> =>{
 
 
     return await db.insert(wallets).values({
@@ -29,4 +30,13 @@ export const CreateWallet_Dal = async ({id}:CreateWalletPropIn): Promise<CreateW
     })
 
         
+}
+
+
+export const DeleteWallet_Dal = async ({id}:WalletPropIn): Promise<CreateWalletDalPromise[]> =>{
+    return await db.delete(wallets).where(eq( wallets.id, id)).returning()
+}
+
+export const UpdatedWallet_Dal = async ({}: WalletPropIn) =>{
+    
 }
