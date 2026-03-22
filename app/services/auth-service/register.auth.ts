@@ -51,6 +51,7 @@ type ServiceResult<T> = ServiceSuccess<T> | ServiceError;
 interface RegisterSuccessPayload {
     user: {
         id: string;
+        id: string;
         name: string;
         email: string;
     };

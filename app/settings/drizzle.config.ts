@@ -1,6 +1,4 @@
 
-
-
 import { defineConfig} from "drizzle-kit"
 import dotenv from "dotenv"
 import { DATABASE_CREDENTIALS } from "./constant.js"
