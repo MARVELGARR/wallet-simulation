@@ -81,3 +81,7 @@ export type UserSelect = typeof users.$inferSelect;
 export type UserInsert = typeof users.$inferInsert;
 export type RefreshTokenSelect = typeof refreshTokens.$inferSelect;
 export type RefreshTokenInsert = typeof refreshTokens.$inferInsert;
+
+// Export a convenience type for a selected wallet row
+
+export type WalletInsert = typeof wallets.$inferInsert

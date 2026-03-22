@@ -16,10 +16,9 @@ export type CreateWalletDalPromise = {
 }
 
 
-export const CreateWallet_Dal = async ({id}:WalletPropIn): Promise<CreateWalletDalPromise[]> =>{
+export const CreateWallet_Dal = async ({id}:WalletPropIn): Promise<CreateWalletDalPromise> =>{
 
-
-    return await db.insert(wallets).values({
+    const result = await db.insert(wallets).values({
         userId: id,
         currency: "NGN"
     }).returning({
@@ -29,14 +28,24 @@ export const CreateWallet_Dal = async ({id}:WalletPropIn): Promise<CreateWalletD
         updatedAt: wallets.updatedAt
     })
 
+    const TheCreatedWallet = result[0]
+    return TheCreatedWallet
         
 }
 
-
-export const DeleteWallet_Dal = async ({id}:WalletPropIn): Promise<CreateWalletDalPromise[]> =>{
-    return await db.delete(wallets).where(eq( wallets.id, id)).returning()
+export const GetWallet = async (id: string) =>{
+     const result =await db.select().from(wallets).where(eq( wallets.id, id))
+     const Thewallet = result[0]
+     return Thewallet
 }
 
-export const UpdatedWallet_Dal = async ({}: WalletPropIn) =>{
+
+export const DeleteWallet_Dal = async ({id}:WalletPropIn): Promise<CreateWalletDalPromise> =>{
+    const result = await db.delete(wallets).where(eq( wallets.id, id)).returning()
+    const TheDeletedWallet = result[0]
+    return TheDeletedWallet
+}
+
+// export const UpdatedWallet_Dal = async ({}: WalletPropIn) =>{
     
-}
+// }

@@ -1,4 +1,7 @@
-import { CreateWallet_Dal, CreateWalletDalPromise, CreateWalletPropIn } from "../../data-access-layer/wallet/wallet.db.js"
+
+
+
+import { CreateWallet_Dal, CreateWalletDalPromise, WalletPropIn } from "../../data-access-layer/wallet/wallet.db.js"
 
 
 export type DalSuccess<T> = { success: true; data: T };
@@ -8,15 +11,15 @@ export type DalResult<T> = DalSuccess<T> | DalError;
 
 
 
-export const Create_Wallet_Services = async (input: CreateWalletPropIn): Promise<DalResult<CreateWalletDalPromise>> => {
+export const Create_Wallet_Services = async (input: WalletPropIn): Promise<DalResult<CreateWalletDalPromise>> => {
     try {
         const newWallet = await CreateWallet_Dal(input);
         
-        if (!newWallet || newWallet.length === 0) {
+        if (!newWallet ) {
             return { success: false, error: "Wallet creation failed: No data returned.", code: "DB_EMPTY_RESULT" };
         }
         
-        return { success: true, data: newWallet[0] };
+        return { success: true, data: newWallet };
     } catch (error) {
         // Log the actual error for debugging, return a friendly message to the UI
         console.error("[Wallet_Service] Critical Error:", error);
