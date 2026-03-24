@@ -1,8 +1,7 @@
 import { eq } from "drizzle-orm"
 import { WalletInsert, wallets } from "../../database/schema.js"
 import { db } from "../../settings/db.config.js"
-import { AppError, NotFoundError, ValidationError } from "../../settings/errorPerser.js"
-import { GetWallet } from "../wallet/wallet.db.js"
+import {ValidationError } from "../../settings/errorPerser.js"
 
 
 export type Deposit_Dal_prop = {
