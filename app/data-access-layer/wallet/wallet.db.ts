@@ -34,10 +34,11 @@ export const CreateWallet_Dal = async ({id}:WalletPropIn): Promise<CreateWalletD
 }
 
 export const GetWallet = async (id: string) =>{
-     const result =await db.select().from(wallets).where(eq( wallets.id, id))
-     const Thewallet = result[0]
-     return Thewallet
+     const [result] =await db.select().from(wallets).where(eq( wallets.id, id))
+    
+     return result
 }
+
 
 
 export const DeleteWallet_Dal = async ({id}:WalletPropIn): Promise<CreateWalletDalPromise> =>{

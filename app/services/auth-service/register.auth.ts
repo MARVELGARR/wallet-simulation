@@ -51,7 +51,6 @@ type ServiceResult<T> = ServiceSuccess<T> | ServiceError;
 interface RegisterSuccessPayload {
     user: {
         id: string;
-        id: string;
         name: string;
         email: string;
     };
@@ -112,13 +111,7 @@ export const RegisterUser = async (
     const newUser = dbResult.data;
 
 
-    await client.publish({
-        urlGroup: "user-onboading",
-        headers: {
-            "conrent/type" : "application/json"
-        },
-        body: JSON.stringify(newUser)
-    })
+
 
     // ── Step 4: Sign tokens ───────────────────────────────────
     // We sign both a short-lived access token and a long-lived refresh token.

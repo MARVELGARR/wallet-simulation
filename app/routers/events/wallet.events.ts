@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
-import { router } from "../settings/router.config.js";
-import { Create_Wallet_Services } from "../services/wallet-service/create-wallet.js";
+import { router } from "../../settings/router.config.js";
+import { Create_Wallet_Services } from "../../services/wallet-service/create-wallet.js";
 
 
 
 
-
-router.post('/create-wallet', async (req: Request, res: Response) => {
+router.post('/create-wallet-events', async (req: Request, res: Response) => {
     try {
         // 1. Basic Validation (In industry, use Zod here)
         const { id, name, email } = req.body;

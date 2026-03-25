@@ -8,13 +8,14 @@ import { TransactionType, wallets, transactions } from "../../database/schema.js
 import { db } from "../../settings/db.config.js";
 import { eq } from "drizzle-orm";
 import { CompleteDeposit } from "../../services/payment-service/transaction.deposit.js";
+import { GetWallet } from "../../data-access-layer/wallet/wallet.db.js";
 
 router.post("/deposit_event", async (req: Request, res: Response) => {
     const { transactionId, walletId, amount } = req.body;
 
     try {
         // 1. Fetch current wallet state to get current balance
-        const [wallet] = await db.select().from(wallets).where(eq(wallets.id, walletId));
+        const wallet = await GetWallet(walletId)
         if (!wallet) throw new Error("Wallet not found during event processing");
 
         // 2. Perform the actual deposit (balance update)

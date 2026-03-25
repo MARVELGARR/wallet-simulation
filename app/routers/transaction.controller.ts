@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { router } from "../settings/router.config.js";
-import { transactions, WalletInsert, wallets } from "../database/schema.js";
+import { transactions, TransactionType, WalletInsert, wallets, WalletType } from "../database/schema.js";
 import { client } from "../settings/upstach.qstach.config.js";
 import { db } from "../settings/db.config.js";
 import { eq } from "drizzle-orm";
@@ -9,7 +9,7 @@ import { NotFoundError } from "../settings/errorPerser.js";
 
 
 
-router.post("/deposit", async (req: Request, res: Response) => {
+router.post("/deposit-transaction", async (req: Request, res: Response) => {
     const { ammount, walletId, userId } = req.body;
 
     if (!ammount) return res.status(400).json({ message: "amount to be sent is required" })
@@ -62,4 +62,32 @@ router.post("/deposit", async (req: Request, res: Response) => {
             message: (parsedError as any).message 
         })
     }
+})
+
+router.post("/transfere-money-even", async (req: Request, res: Response)=>{
+    const {
+        senderWalletId,
+        receiverWalletId,
+        userId,
+        amount
+    }:{
+        senderWalletId: TransactionType["senderWalletId"],
+        receiverWalletId: TransactionType["receiverWalletId"],
+        userId?: TransactionType["id"],
+        amount: TransactionType["amount"]
+    } = req.body
+
+    if (!amount) return res.status(400).json({ message: "amount to be sent is required" })
+    if (!senderWalletId) return res.status(400).json({ message: "SenderwalletId is required!" })    
+    if (!receiverWalletId) return res.status(400).json({ message: "receiverWalletId is required!" })    
+
+    try{
+        await db.transaction( async (tcx)=>{
+
+        })
+    }
+    catch(error){
+
+    }
+
 })
