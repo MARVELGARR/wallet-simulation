@@ -38,6 +38,11 @@ export const GetWallet = async (id: string) =>{
     
      return result
 }
+export const GetWalletForUpdate = async (id: string) =>{
+     const [result] =await db.select().from(wallets).where(eq( wallets.id, id)).for("update")
+    
+     return result
+}
 
 
 

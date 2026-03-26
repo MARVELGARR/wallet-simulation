@@ -42,9 +42,7 @@ router.post("/deposit-transac", async (req: Request, res: Response) => {
                 urlGroup: "transactions", 
                 body: {
                     transactionId: newTransaction.id,
-                    userId: userId,
-                    amount: newTransaction.amount,
-                    walletId: walletId
+                    
                 }
             })
 
@@ -112,9 +110,60 @@ router.post("/transfer-money-transac", async (req: Request, res: Response) => {
             });
         });
     } catch (error) {
+        
+    }
+});
+
+
+router.post("/withdrawer-money-transc", async (req: Request, res:Response)=>{
+
+    const {
+        WalletId,
+        userId,
+        amount
+    }: {
+        WalletId: WalletType["id"],
+        userId?: string,
+        amount: TransactionType["amount"]
+    } = req.body
+
+    if (!WalletId) return res.status(400).json({ message: "wallet ID is required!" })
+    if (!userId) return res.status(400).json({ message: "User ID is required!" })
+    if (!amount) return res.status(400).json({ message: "amount to be withdrawn is required" })
+
+    try{
+        await db.transaction( async (tcx)=>{
+            const [newTransaction] = await tcx.insert(transactions)
+            .values({
+                amount: amount,
+                type: "withdrawal",
+                status: "pending",
+                senderWalletId: WalletId
+
+            })
+            .returning()
+            // 2. Publish to QStash to process the withdrawer asynchronously
+            await client.publishJSON({
+                urlGroup: "transactions",
+                body: {
+                    transactionId: newTransaction.id ,
+                    userId:userId
+                }
+            });
+    
+            return res.status(202).json({
+                message: "withdrawer is being processed",
+                txId: newTransaction.id
+            });
+        })
+
+    }
+    catch(error){
         console.error("[Transfer_Controller] Error:", error);
         const statusCode = (error as any).statusCode || 500;
         const message = (error as any).message || "Transaction failed, please try again later.";
         return res.status(statusCode).json({ message });
     }
-});
+
+
+})

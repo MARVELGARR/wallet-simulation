@@ -16,7 +16,7 @@ router.post("/transfer_event", async (req: Request, res: Response) => {
             senderWalletId,
             recieverWalletId: receiverWalletId,
             ammount: amount,
-            currency: "USD" // Default if not specified in message
+            currency: "NGN" // Default if not specified in message
         });
 
         if (!transferResult.success) {
