@@ -7,8 +7,9 @@ import { router } from "../../settings/router.config.js";
 import { TransactionType, wallets, transactions } from "../../database/schema.js";
 import { db } from "../../settings/db.config.js";
 import { eq } from "drizzle-orm";
-import { CompleteDeposit } from "../../services/payment-service/transaction.deposit.js";
+
 import { GetWallet } from "../../data-access-layer/wallet/wallet.db.js";
+import { CompleteDeposit } from "../../services/payment-service/transaction.serviece.deposit.js";
 
 router.post("/deposit_event", async (req: Request, res: Response) => {
     const { transactionId, walletId, amount } = req.body;

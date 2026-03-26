@@ -9,7 +9,7 @@ import { NotFoundError } from "../settings/errorPerser.js";
 
 
 
-router.post("/deposit-transaction", async (req: Request, res: Response) => {
+router.post("/deposit-transac", async (req: Request, res: Response) => {
     const { ammount, walletId, userId } = req.body;
 
     if (!ammount) return res.status(400).json({ message: "amount to be sent is required" })
@@ -28,14 +28,14 @@ router.post("/deposit-transaction", async (req: Request, res: Response) => {
             }
 
             // 2. Create pending transaction record
-            const result = await tcx.insert(transactions).values({
-                type: "deposit",
+            const [newTransaction] = await tcx.insert(transactions).values({
+                type: "transfer",
                 amount: ammount,
                 status: "pending",
                 receiverWalletId: walletId
             }).returning()
 
-            const newTransaction = result[0]
+            
 
             // 3. Publish to QStash to process the deposit asynchronously
             await client.publishJSON({
@@ -64,7 +64,7 @@ router.post("/deposit-transaction", async (req: Request, res: Response) => {
     }
 })
 
-router.post("/transfer-money-event", async (req: Request, res: Response) => {
+router.post("/transfer-money-transac", async (req: Request, res: Response) => {
     const {
         senderWalletId,
         receiverWalletId,
@@ -84,7 +84,7 @@ router.post("/transfer-money-event", async (req: Request, res: Response) => {
     try {
         await db.transaction(async (tcx) => {
             // 1. Create a "pending" transaction record in our ledger
-            const result = await tcx.insert(transactions).values({
+            const [newTransaction] = await tcx.insert(transactions).values({
                 senderWalletId,
                 receiverWalletId,
                 amount,
@@ -92,7 +92,7 @@ router.post("/transfer-money-event", async (req: Request, res: Response) => {
                 status: "pending",
             }).returning();
 
-            const newTransaction = result[0];
+            
 
             // 2. Publish to QStash to process the transfer asynchronously
             await client.publishJSON({

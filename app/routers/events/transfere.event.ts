@@ -4,7 +4,8 @@ import { router } from "../../settings/router.config.js";
 import { transactions } from "../../database/schema.js";
 import { db } from "../../settings/db.config.js";
 import { eq } from "drizzle-orm";
-import { CompleteTransfer } from "../../services/payment-service/transaction.transer.js";
+import { CompleteTransfer } from "../../services/payment-service/transaction.erviece..transer.js";
+
 
 router.post("/transfer_event", async (req: Request, res: Response) => {
     const { transactionId, senderWalletId, receiverWalletId, amount } = req.body;
