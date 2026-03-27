@@ -3,7 +3,6 @@
 
 
 import dotenv from "dotenv"
-import EventEmitter from "node:events"
 dotenv.config()
 
 export const DATABASE_CREDENTIALS = {
