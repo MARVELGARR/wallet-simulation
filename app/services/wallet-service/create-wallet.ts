@@ -11,9 +11,9 @@ export type DalResult<T> = DalSuccess<T> | DalError;
 
 
 
-export const Create_Wallet_Services = async (input: WalletPropIn): Promise<DalResult<CreateWalletDalPromise>> => {
+export const Create_Wallet_Services = async ({id}: WalletPropIn): Promise<DalResult<CreateWalletDalPromise>> => {
     try {
-        const newWallet = await CreateWallet_Dal(input);
+        const newWallet = await CreateWallet_Dal({id});
         
         if (!newWallet ) {
             return { success: false, error: "Wallet creation failed: No data returned.", code: "DB_EMPTY_RESULT" };

@@ -4,8 +4,8 @@ import { db } from "../../settings/db.config.js";
 
 export type WalletPropIn={
     id: string;
-    name: string;
-    email: string;
+    name?: string;
+    email?: string;
 }
 
 export type CreateWalletDalPromise = {
@@ -16,7 +16,7 @@ export type CreateWalletDalPromise = {
 }
 
 
-export const CreateWallet_Dal = async ({id}:WalletPropIn): Promise<CreateWalletDalPromise> =>{
+export const CreateWallet_Dal = async ({id}:{id: string}): Promise<CreateWalletDalPromise> =>{
 
     const result = await db.insert(wallets).values({
         userId: id,
@@ -46,7 +46,7 @@ export const GetWalletForUpdate = async (id: string) =>{
 
 
 
-export const DeleteWallet_Dal = async ({id}:WalletPropIn): Promise<CreateWalletDalPromise> =>{
+export const DeleteWallet_Dal = async ({id}:{id: string}): Promise<CreateWalletDalPromise> =>{
     const result = await db.delete(wallets).where(eq( wallets.id, id)).returning()
     const TheDeletedWallet = result[0]
     return TheDeletedWallet

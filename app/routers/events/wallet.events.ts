@@ -1,3 +1,6 @@
+
+
+
 import { Request, Response } from "express";
 import { router } from "../../settings/router.config.js";
 import { Create_Wallet_Services } from "../../services/wallet-service/create-wallet.js";
@@ -8,11 +11,11 @@ import { Create_Wallet_Services } from "../../services/wallet-service/create-wal
 router.post('/create-wallet-events', async (req: Request, res: Response) => {
     try {
         // 1. Basic Validation (In industry, use Zod here)
-        const { id, name, email } = req.body;
+        const { id, } = req.body;
         if (!id) return res.status(400).json({ success: false, error: "User ID is required" });
 
         // 2. Call Service
-        const result = await Create_Wallet_Services({ id, name, email });
+        const result = await Create_Wallet_Services({id});
 
         // 3. Handle Service Result
         if (result.success) {
@@ -36,3 +39,8 @@ router.post('/create-wallet-events', async (req: Request, res: Response) => {
         });
     }
 });
+
+
+export {
+    router as trial
+}

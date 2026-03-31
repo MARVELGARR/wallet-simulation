@@ -5,6 +5,7 @@ import { app } from "../settings/app.config.js";
 import express from "express";
 import { router } from "../settings/router.config.js";
 import { userRouter } from "../routers/auth.controller.js";
+import { trial } from "../routers/events/wallet.events.js";
 
 // ── Middleware ────────────────────────────────────────────────
 app.use(express.json());
@@ -13,6 +14,7 @@ app.use(express.json());
 // All routes inside userRouter are accessible at /api/v1/...
 // e.g. POST /api/v1/auth/register
 app.use("/api/v1", userRouter);
+app.use("/api/v1", trial);
 
 router.get("/", (req, res)=>{
     res.send("wahala")
