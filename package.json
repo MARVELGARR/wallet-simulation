@@ -6,14 +6,16 @@
   "author": "marvellous obatale",
   "type": "module",
   "main": "dist/server/index.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "tsx watch app/server/index.ts",
-    "build": "tsc",
+    "build": "npm install && tsc",
     "start": "node dist/server/index.js",
     "db:generate": ""
   },
   "dependencies": {
-    "@types/bcrypt": "^6.0.0",
     "@upstash/qstash": "^2.9.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
@@ -22,9 +24,11 @@
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.18.0",
+    "typescript": "^5.9.3",
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
@@ -32,7 +36,6 @@
     "@types/pg": "^8.16.0",
     "drizzle-kit": "^0.31.9",
     "nodemon": "^3.1.11",
-    "tsx": "^4.19.0",
-    "typescript": "^5.9.3"
+    "tsx": "^4.19.0"
   }
 }
