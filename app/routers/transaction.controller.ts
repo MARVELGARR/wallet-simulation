@@ -39,13 +39,13 @@ router.post("/deposit-transac", async (req: Request, res: Response) => {
             
 
             // 3. Publish to QStash to process the deposit asynchronously
-            // await client.publishJSON({
-            //     urlGroup: "transactions", 
-            //     body: {
-            //         transactionId: newTransaction.id,
+            await client.publishJSON({
+                urlGroup: "transactions", 
+                body: {
+                    transactionId: newTransaction.id,
                     
-            //     }
-            // })
+                }
+            })
 
             return res.status(202).json({ 
                 message: "Processing", 

@@ -4,11 +4,12 @@ import { Withdraw_Money_service } from "../../services/payment-service/transacti
 import { db } from "../../settings/db.config.js";
 import { transactions } from "../../database/schema.js";
 import { eq } from "drizzle-orm";
+import { rawBodyParser, verifyQStash } from "../../settings/qstash.middleware.js";
 
 
 
 
-router.post("/withdraw_event", async (req: Request, res: Response) => {
+router.post("/withdraw_event", rawBodyParser, verifyQStash, async (req: Request, res: Response) => {
     const { transactionId, userId} = req.body;
 
     try{
@@ -18,7 +19,7 @@ router.post("/withdraw_event", async (req: Request, res: Response) => {
             throw new Error(withdrawerRsult.error);
         }
 
-        const updateTransaction = await db.update(transactions)
+        await db.update(transactions)
         .set({
             status: "completed",
         }).where(eq(transactions.id, transactionId))

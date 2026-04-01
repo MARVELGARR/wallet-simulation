@@ -5,9 +5,10 @@ import { transactions } from "../../database/schema.js";
 import { db } from "../../settings/db.config.js";
 import { eq } from "drizzle-orm";
 import { CompleteTransfer } from "../../services/payment-service/transaction.erviece..transer.js";
+import { rawBodyParser, verifyQStash } from "../../settings/qstash.middleware.js";
 
 
-router.post("/transfer_event", async (req: Request, res: Response) => {
+router.post("/transfer_event", rawBodyParser, verifyQStash, async (req: Request, res: Response) => {
     const { transactionId, senderWalletId, receiverWalletId, amount } = req.body;
 
     try {
