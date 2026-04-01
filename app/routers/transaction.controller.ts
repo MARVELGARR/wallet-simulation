@@ -10,7 +10,7 @@ import { NotFoundError } from "../settings/errorPerser.js";
 
 
 router.post("/deposit-transac", async (req: Request, res: Response) => {
-    const { ammount, walletId, userId } = req.body;
+    const { ammount, walletId } = req.body;
 
     if (!ammount) return res.status(400).json({ message: "amount to be sent is required" })
     if (!walletId) return res.status(400).json({ message: "walletId is required!" })
@@ -32,19 +32,20 @@ router.post("/deposit-transac", async (req: Request, res: Response) => {
                 type: "transfer",
                 amount: ammount,
                 status: "pending",
-                receiverWalletId: walletId
+                receiverWalletId: walletId,
+                
             }).returning()
 
             
 
             // 3. Publish to QStash to process the deposit asynchronously
-            await client.publishJSON({
-                urlGroup: "transactions", 
-                body: {
-                    transactionId: newTransaction.id,
+            // await client.publishJSON({
+            //     urlGroup: "transactions", 
+            //     body: {
+            //         transactionId: newTransaction.id,
                     
-                }
-            })
+            //     }
+            // })
 
             return res.status(202).json({ 
                 message: "Processing", 
@@ -167,3 +168,8 @@ router.post("/withdrawer-money-transc", async (req: Request, res:Response)=>{
 
 
 })
+
+
+export {
+    router as tran_route
+}

@@ -6,6 +6,7 @@ import express from "express";
 import { router } from "../settings/router.config.js";
 import { userRouter } from "../routers/auth.controller.js";
 import { trial } from "../routers/events/wallet.events.js";
+import { tran_route } from "../routers/transaction.controller.js";
 
 // ── Middleware ────────────────────────────────────────────────
 app.use(express.json());
@@ -15,6 +16,7 @@ app.use(express.json());
 // e.g. POST /api/v1/auth/register
 app.use("/api/v1", userRouter);
 app.use("/api/v1", trial);
+app.use("/api/v1", tran_route);
 
 router.get("/", (req, res)=>{
     res.send("wahala")

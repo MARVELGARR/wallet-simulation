@@ -25,18 +25,20 @@
 
 
 
-
-# POST  http://localhost:3000/api/v1/deposit-transac HTTP/1.1
+# POST  http://localhost:3000/api/v1/create-wallet-events HTTP/1.1
 # content-type: application/json
 
 # {
-#     "name": "gorro",
-#     "email": "gorro@gmail.com",
-#     "password": "gorrolous"
+#     "id": "868c9105-3038-4816-af3b-d4b58fe7b71f"
+    
 # }
-POST  http://localhost:3000/api/v1/create-wallet-events HTTP/1.1
+
+
+
+POST  http://localhost:3000/api/v1/deposit-transac HTTP/1.1
 content-type: application/json
 
 {
-    "id": "2"
+    "ammount": "2.00",
+    "walletId": "dcf550ec-1b35-4a30-aaec-cfd16fafd722"
 }

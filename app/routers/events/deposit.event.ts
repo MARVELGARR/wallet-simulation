@@ -4,7 +4,7 @@
 
 import { Request, Response } from "express";
 import { router } from "../../settings/router.config.js";
-import { TransactionType, wallets, transactions } from "../../database/schema.js";
+import {  wallets, transactions } from "../../database/schema.js";
 import { db } from "../../settings/db.config.js";
 import { eq } from "drizzle-orm";
 import { CompleteDeposit } from "../../services/payment-service/transaction.serviece.deposit.js";
