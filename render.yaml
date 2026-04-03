@@ -1,0 +1,59 @@
+
+
+services:
+  - type: web
+    name: wallet-api
+    runtime: node
+    region: frankfurt  # change to: ohio | oregon | singapore as needed
+
+    # ── Build ───────────────────────────────────────────────────
+    # npm install installs ALL deps (including typescript in dependencies)
+    # then tsc compiles to dist/
+    buildCommand: npm run build
+
+    # ── Start ───────────────────────────────────────────────────
+    # Runs the compiled JS — no tsx needed at runtime
+    startCommand: node dist/server/index.js
+
+    # ── Health check ────────────────────────────────────────────
+    healthCheckPath: /
+
+    # ── Environment Variables ───────────────────────────────────
+    # Set SECRET values in the Render dashboard, not here.
+    # Only non-secret defaults and references go here.
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      - key: PORT
+        value: 3000
+
+      # ── Database (set in Render dashboard) ──────────────────
+      - key: DB_HOST
+        sync: false        # means: must be set manually in dashboard
+      - key: DB_PORT
+        value: 5432
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+
+      # ── Auth (set in Render dashboard) ──────────────────────
+      - key: JWT_SECRET
+        sync: false
+
+      # ── QStash (set in Render dashboard) ────────────────────
+      - key: QSTASH_TOKEN
+        sync: false
+      - key: QSTASH_CURRENT_SIGNING_KEY
+        sync: false
+      - key: QSTASH_NEXT_SIGNING_KEY
+        sync: false
+
+      # ── App public URL ────────────────────────────────────────
+      # Set this to your Render service URL after first deploy:
+      # e.g. https://wallet-api.onrender.com
+      - key: APP_BASE_URL
+        sync: false

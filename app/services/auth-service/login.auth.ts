@@ -1,7 +1,9 @@
 import z from "zod";
 import { comparePassword } from "./bcrypt.util.js";
 import { findUserByEmail } from "../../data-access-layer/user/user.js";
-import { signToken } from "./jwt.util.js";
+import { signAccessToken, signRefreshToken } from "./jwt.util.js";
+import { saveRefreshToken } from "../../data-access-layer/auth/refresh-token.js";
+
 
 
 
@@ -30,7 +32,7 @@ export const login = async (rawInput: LoginProp) => {
         return {
             success: false,
             error: "Validation failed",
-            details: parsed.error.flatten().fieldErrors, // field-level errors for the frontend
+            details: z.treeifyError(parsed.error).errors, // field-level errors for the frontend
         };
     }
 
@@ -46,12 +48,33 @@ export const login = async (rawInput: LoginProp) => {
     const isPassword = await comparePassword(password, user.data.password)
 
     if(isPassword){
-        // Sign a JWT for the authenticated session
-        const token = signToken({
+        // Sign an ACCESS token (short-lived)
+        const accessToken = signAccessToken({
             sub: user.data.id,
             email: user.data.email,
             name: user.data.name,
         });
+
+        // Sign a REFRESH token (long-lived)
+        const refreshToken = signRefreshToken({
+            sub: user.data.id,
+            email: user.data.email,
+            name: user.data.name,
+        });
+
+        // Persist refresh token in DB
+        try {
+            await saveRefreshToken({
+                userId: user.data.id,
+                token: refreshToken,
+                expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+            });
+        } catch (err) {
+            console.error("[login.service] Failed to save refresh token:", err);
+            return { success: false, error: "Authentication failed due to session error." };
+        }
+
+
 
         return {
             success: true,
@@ -61,7 +84,8 @@ export const login = async (rawInput: LoginProp) => {
                     name: user.data.name,
                     email: user.data.email,
                 },
-                token
+                accessToken,
+                refreshToken
             }
         }
     }

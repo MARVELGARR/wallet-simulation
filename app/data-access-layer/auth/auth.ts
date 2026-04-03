@@ -1,3 +1,5 @@
+
+
 import { eq } from "drizzle-orm";
 import { users } from "../../database/schema.js";
 import { db } from "../../settings/db.config.js";
@@ -16,9 +18,9 @@ interface NewUserData {
 
 // DAL response uses a discriminated union — lets callers do proper
 // type-safe error handling without throwing exceptions across layers.
-type DalSuccess<T> = { success: true; data: T };
-type DalError    = { success: false; error: string; code?: string };
-type DalResult<T> = DalSuccess<T> | DalError;
+export type DalSuccess<T> = { success: true; data: T };
+export type DalError    = { success: false; error: string; code?: string };
+export type DalResult<T> = DalSuccess<T> | DalError;
 
 // ─────────────────────────────────────────────────────────────
 // Registration — inserts a new user row, checks for duplicates
@@ -29,7 +31,7 @@ type DalResult<T> = DalSuccess<T> | DalError;
 // ─────────────────────────────────────────────────────────────
 export const Registration = async (
     userData: NewUserData
-): Promise<DalResult<{ id: number; name: string; email: string }>> => {
+): Promise<DalResult<{ id: string; name: string; email: string }>> => {
 
     // ── Guard: check if email is already registered ──────────
     // We check before insert to return a clean, actionable error code.
@@ -40,7 +42,7 @@ export const Registration = async (
         existing = await db
             .select({ id: users.id })
             .from(users)
-            .where(eq(users.email, userData.email))
+            .where(eq (users.email, userData.email))
             .limit(1);
     } catch (err) {
         console.error("[auth-dal] DB error during email uniqueness check:", err);

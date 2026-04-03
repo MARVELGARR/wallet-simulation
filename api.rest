@@ -1,0 +1,44 @@
+
+
+
+
+
+
+# POST http://localhost:3000/api/v1/auth/register HTTP/1.1
+# content-type: application/json
+
+# {
+#     "name": "garra",
+#     "email": "marvellouso@gmail.com",
+#     "password": "marvellous"
+# }
+
+
+# POST  http://localhost:3000/api/v1/auth/register HTTP/1.1
+# content-type: application/json
+
+# {
+#     "name": "gorro",
+#     "email": "gorro@gmail.com",
+#     "password": "gorrolous"
+# }
+
+
+
+# POST  http://localhost:3000/api/v1/create-wallet-events HTTP/1.1
+# content-type: application/json
+
+# {
+#     "id": "868c9105-3038-4816-af3b-d4b58fe7b71f"
+    
+# }
+
+
+
+POST  http://localhost:3000/api/v1/deposit-transac HTTP/1.1
+content-type: application/json
+
+{
+    "ammount": "2.00",
+    "walletId": "dcf550ec-1b35-4a30-aaec-cfd16fafd722"
+}

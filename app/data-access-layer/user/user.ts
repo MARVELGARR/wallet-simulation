@@ -17,7 +17,7 @@ type DalResult<T> = DalSuccess<T> | DalError;
 // ─────────────────────────────────────────────────────────────
 export const findUserByEmail = async (
     email: string
-): Promise<DalResult<{ id: number; name: string; email: string; password: string }>> => {
+): Promise<DalResult<{ id: string; name: string; email: string; password: string }>> => {
 
     let result;
     try {
