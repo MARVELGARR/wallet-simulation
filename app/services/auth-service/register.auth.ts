@@ -3,9 +3,6 @@ import { Registration } from "../../data-access-layer/auth/auth.js";
 import { hashPassword } from "./bcrypt.util.js";
 import { signAccessToken, signRefreshToken } from "./jwt.util.js";
 import { saveRefreshToken } from "../../data-access-layer/auth/refresh-token.js";
-import { client } from "../../settings/upstach.qstach.config.js";
-
-
 
 
 // ─────────────────────────────────────────────────────────────
