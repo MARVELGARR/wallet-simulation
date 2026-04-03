@@ -7,6 +7,7 @@ import { router } from "../settings/router.config.js";
 import { userRouter } from "../routers/auth.controller.js";
 import { trial } from "../routers/events/wallet.events.js";
 import { tran_route } from "../routers/transaction.controller.js";
+import "../routers/user.controller.js"; // Side-effect import to register user routes
 
 // ── QStash Event Handlers ──────────────────────────────────────
 // These routes are called by QStash (not directly by clients).

@@ -42,3 +42,54 @@ export const findUserByEmail = async (
 
     return { success: true, data: result[0] };
 };
+
+// ─────────────────────────────────────────────────────────────
+// findUserById — used to fetch profile or for internal verification
+// ─────────────────────────────────────────────────────────────
+export const findUserById = async (
+    userId: string
+): Promise<DalResult<{ id: string; name: string; email: string }>> => {
+
+    let result;
+    try {
+        result = await db
+            .select({
+                id:       users.id,
+                name:     users.name,
+                email:    users.email,
+            })
+            .from(users)
+            .where(eq(users.id, userId))
+            .limit(1);
+    } catch (err) {
+        console.error("[user-dal] DB error during findUserById:", err);
+        return { success: false, error: "Database error during user lookup.", code: "DB_ERROR" };
+    }
+
+    if (result.length === 0) {
+        return { success: false, error: "User not found.", code: "USER_NOT_FOUND" };
+    }
+
+    return { success: true, data: result[0] };
+};
+
+// ─────────────────────────────────────────────────────────────
+// getAllUsers — list all users in the system (useful for admins or simulation)
+// ─────────────────────────────────────────────────────────────
+export const getAllUsers = async (): Promise<DalResult<{ id: string; name: string; email: string; createdAt: Date }[]>> => {
+    try {
+        const result = await db
+            .select({
+                id:       users.id,
+                name:     users.name,
+                email:    users.email,
+                createdAt: users.createdAt,
+            })
+            .from(users);
+
+        return { success: true, data: result };
+    } catch (err) {
+        console.error("[user-dal] DB error during getAllUsers:", err);
+        return { success: false, error: "Database error fetching users.", code: "DB_ERROR" };
+    }
+};

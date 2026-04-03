@@ -35,10 +35,12 @@
 
 
 
-POST  http://localhost:3000/api/v1/deposit-transac HTTP/1.1
-content-type: application/json
+# POST  http://localhost:3000/api/v1/deposit-transac HTTP/1.1
+# content-type: application/json
 
-{
-    "ammount": "2.00",
-    "walletId": "dcf550ec-1b35-4a30-aaec-cfd16fafd722"
-}
+# {
+#     "ammount": "2.00",
+#     "walletId": "dcf550ec-1b35-4a30-aaec-cfd16fafd722"
+# }
+GET  https://wallet-simulation.onrender.com/api/v1/users HTTP/1.1
+content-type: application/json
