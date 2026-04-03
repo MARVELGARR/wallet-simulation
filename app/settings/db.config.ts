@@ -24,14 +24,36 @@ export const DATABASE_CREDENTIALS = isProduction ? {
 };
 
 // Initialize pool based on credentials
-const poolConnectionConfig = isProduction && process.env.INTERNAL_DATABASE_URL_PROD 
-    ? { 
-        connectionString: process.env.INTERNAL_DATABASE_URL_PROD,
-        ssl: { rejectUnauthorized: false }
-      } 
-    : { ...DATABASE_CREDENTIALS };
+let poolConnectionConfig;
+
+if (isProduction) {
+    // 1. Try Internal URL (fastest)
+    // 2. Try External URL
+    // 3. Try standard DATABASE_URL (Render default)
+    const connectionString = 
+        process.env.INTERNAL_DATABASE_URL_PROD || 
+        process.env.EXTERNAL_DATABASE_URL_PROD || 
+        process.env.DATABASE_URL;
+
+    if (connectionString) {
+        poolConnectionConfig = {
+            connectionString,
+            ssl: { rejectUnauthorized: false }
+        };
+    } else {
+        // 4. Fallback to individual credentials
+        poolConnectionConfig = {
+            ...DATABASE_CREDENTIALS,
+            ssl: { rejectUnauthorized: false }
+        };
+    }
+} else {
+    // Local dev
+    poolConnectionConfig = { ...DATABASE_CREDENTIALS };
+}
 
 const pool = new Pool(poolConnectionConfig);
+
 
 const db = drizzle(pool)
 
