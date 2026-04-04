@@ -1,3 +1,5 @@
+-- Active: 1774516329418@@127.0.0.1@5432@postgres
+-- Active: 1774516329418@@127.0.0.1@5432@postgres-- Active: 1774516329418@@127.0.0.1@5432@postgres@drizzle-- Active: 1774516329418@@127.0.0.1@5432@postgres
 
 
 
@@ -8,7 +10,6 @@
 # content-type: application/json
 
 # {
-#     "name": "garra",
 #     "email": "marvellouso@gmail.com",
 #     "password": "marvellous"
 # }
@@ -42,6 +43,6 @@
 # }
 
 
-GET https://wallet-simulation.onrender.com/api/v1/users HTTP/1.1
+GET https://localhost:3000/api/v1/users/api/v1/users HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmY2VmM2YzYi0yYWVhLTRlZjctODc4Yy01MGIwMjRkYjQ3MzEiLCJlbWFpbCI6ImdvcnJvQGdtYWlsLmNvbSIsIm5hbWUiOiJnb3JybyIsImlhdCI6MTc3NTIzNzQ2NywiZXhwIjoxNzc1MjM4MzY3LCJpc3MiOiJ3YWxsZXQtYXBpIn0.Bs1kL2PV-jWXT6ez-KyVY9_K9PbiTyqk0vi9cHrdzAo
