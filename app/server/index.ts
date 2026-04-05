@@ -22,12 +22,12 @@ app.use(express.json());
 // ── Routes ────────────────────────────────────────────────────
 // All routes inside userRouter are accessible at /api/v1/...
 // e.g. POST /api/v1/auth/register
-app.use("/api/v1", userRouter);
 app.use("/api/v1", trial);
 app.use("/api/v1", tran_route);
+app.use("/api/v1", userRouter);
 
 // QStash event callback routes: /api/v1/deposit_event, etc.
-app.use("/api/v1", router);
+// app.use("/api/v1", router);
 
 router.get("/", (req, res)=>{
     res.send("wahala")

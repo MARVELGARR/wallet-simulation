@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import { router } from "../settings/router.config.js";
 import { fetchAllUsers, fetchUserById } from "../services/user-service/user.get.js";
-import { requireAuth, AuthenticatedRequest } from "../services/auth-service/auth.middleware.js";
+import { requireAuth } from "../services/auth-service/auth.middleware.js";
 
 /**
  * GET /users
  * Retrieve all registered users.
  * Protected by authentication middleware.
  */
-router.get("/users", requireAuth, async (req: Request, res: Response) => {
+router.get("/users", async (req: Request, res: Response) => {
     try {
         const users = await fetchAllUsers();
         return res.status(200).json({

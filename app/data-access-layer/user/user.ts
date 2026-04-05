@@ -84,6 +84,7 @@ export const getAllUsers = async (): Promise<DalResult<{ id: string; name: strin
                 name:     users.name,
                 email:    users.email,
                 createdAt: users.createdAt,
+                
             })
             .from(users);
 
