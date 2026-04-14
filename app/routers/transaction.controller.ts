@@ -40,7 +40,7 @@ router.post("/deposit-transac", async (req: Request, res: Response) => {
 
             // 3. Publish to QStash to process the deposit asynchronously
             await client.publishJSON({
-                urlGroup: "transactions", 
+                url: "/deposit-transac-qstach", 
                 body: {
                     transactionId: newTransaction.id,
                     
@@ -111,7 +111,11 @@ router.post("/transfer-money-transac", async (req: Request, res: Response) => {
             });
         });
     } catch (error) {
-        
+        console.error("[Transfere_Money_Controller] Error:", error)
+        const parsedError = error instanceof NotFoundError ? error : { statusCode: 500, message: "transaction failed, something went wrong" }
+        return res.status((parsedError as any).statusCode || 500).json({ 
+            message: (parsedError as any).message 
+        })
     }
 });
 
