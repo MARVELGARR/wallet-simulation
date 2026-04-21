@@ -1,14 +1,13 @@
 
-
-
 import { Request, Response } from "express";
 import { router } from "../../settings/router.config.js";
 import { Create_Wallet_Services } from "../../services/wallet-service/create-wallet.js";
+import { rawBodyParser, verifyQStash } from "../../settings/qstash.middleware.js";
 
 
 
 
-router.post('/create-wallet-events', async (req: Request, res: Response) => {
+router.post('/create-wallet-events', rawBodyParser, verifyQStash, async (req: Request, res: Response) => {
     try {
         // 1. Basic Validation (In industry, use Zod here)
         const { id, } = req.body;

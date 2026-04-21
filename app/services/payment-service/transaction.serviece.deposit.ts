@@ -10,11 +10,11 @@ export type DalError    = { success: false; error: string; code?: string };
 export type DalResult<T> = DalSuccess<T> | DalError;
 
 
-export const CompleteDeposit =  async ({ammount, walletId, walletBalance, currency}:Deposit_Dal_prop) =>{
+export const CompleteDeposit =  async ({amount, walletId, walletBalance, currency}:Deposit_Dal_prop) =>{
 
     try{
 
-        const result = await Deposit_Dal({ammount, walletId, walletBalance, currency})
+        const result = await Deposit_Dal({amount, walletId, walletBalance, currency})
     
         if(!result){
              return { success: false, error: "Deposit creation failed: No data returned.", code: "DB_EMPTY_RESULT" }

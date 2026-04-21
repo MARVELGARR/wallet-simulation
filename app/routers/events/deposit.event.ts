@@ -32,7 +32,7 @@ router.post("/deposit_event", rawBodyParser, verifyQStash, async (req: Request, 
 
             // 2. Perform the actual deposit (balance update)
             const result = await CompleteDeposit({
-                ammount: The_transaction.amount,
+                amount: The_transaction.amount,
                 walletId: wallet.id,
                 walletBalance: wallet.balance,
                 currency: wallet.currency
@@ -41,7 +41,7 @@ router.post("/deposit_event", rawBodyParser, verifyQStash, async (req: Request, 
             if (!result.success) throw new Error(result.error);
 
             // 3. Mark transaction as completed
-            await db.update(transactions)
+            await tcx.update(transactions)
                 .set({ status: "completed" })
                 .where(eq(transactions.id, transactionId));
                 

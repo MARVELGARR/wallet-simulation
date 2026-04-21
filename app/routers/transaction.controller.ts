@@ -10,9 +10,9 @@ import { NotFoundError } from "../settings/errorPerser.js";
 
 
 router.post("/deposit-transac", async (req: Request, res: Response) => {
-    const { ammount, walletId } = req.body;
+    const { amount, walletId } = req.body;
 
-    if (!ammount) return res.status(400).json({ message: "amount to be sent is required" })
+    if (!amount) return res.status(400).json({ message: "amount to be sent is required" })
     if (!walletId) return res.status(400).json({ message: "walletId is required!" })
 
     try {
@@ -29,8 +29,8 @@ router.post("/deposit-transac", async (req: Request, res: Response) => {
 
             // 2. Create pending transaction record
             const [newTransaction] = await tcx.insert(transactions).values({
-                type: "transfer",
-                amount: ammount,
+                type: "deposit",
+                amount: amount,
                 status: "pending",
                 receiverWalletId: walletId,
                 
@@ -40,7 +40,7 @@ router.post("/deposit-transac", async (req: Request, res: Response) => {
 
             // 3. Publish to QStash to process the deposit asynchronously
             await client.publishJSON({
-                url: "/deposit-transac-qstach", 
+                url: `${process.env.APP_BASE_URL}/api/v1/deposit_event`, 
                 body: {
                     transactionId: newTransaction.id,
                     
@@ -95,7 +95,7 @@ router.post("/transfer-money-transac", async (req: Request, res: Response) => {
 
             // 2. Publish to QStash to process the transfer asynchronously
             await client.publishJSON({
-                urlGroup: "transactions",
+                url: `${process.env.APP_BASE_URL}/api/v1/transfer_event`,
                 body: {
                     transactionId: newTransaction.id,
                     senderWalletId: newTransaction.senderWalletId,
@@ -147,12 +147,12 @@ router.post("/withdrawer-money-transc", async (req: Request, res:Response)=>{
 
             })
             .returning()
-            // 2. Publish to QStash to process the withdrawer asynchronously
+            // 2. Publish to QStash to process the withdrawal asynchronously
             await client.publishJSON({
-                urlGroup: "transactions",
+                url: `${process.env.APP_BASE_URL}/api/v1/withdraw_event`,
                 body: {
-                    transactionId: newTransaction.id ,
-                    userId:userId
+                    transactionId: newTransaction.id,
+                    userId: userId
                 }
             });
     

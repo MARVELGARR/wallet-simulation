@@ -6,15 +6,15 @@ import {ValidationError } from "../../settings/errorPerser.js"
 
 export type Deposit_Dal_prop = {
     walletId: string
-    ammount: WalletInsert["balance"],
+    amount: WalletInsert["balance"],
     currency: WalletInsert['currency'],
     walletBalance:  WalletInsert["balance"],
 }
 
 
-export const Deposit_Dal  = async ({ammount, walletId, walletBalance}:Deposit_Dal_prop)=>{
+export const Deposit_Dal  = async ({amount, walletId, walletBalance}:Deposit_Dal_prop)=>{
      
-        if(ammount === undefined || ammount === null){
+        if(amount === undefined || amount === null){
             throw new ValidationError("Amount is not specified")
         }
         if(walletBalance === undefined || walletBalance === null){
@@ -24,7 +24,7 @@ export const Deposit_Dal  = async ({ammount, walletId, walletBalance}:Deposit_Da
             throw new ValidationError("WalletId is not provided")
         }
 
-        const newBalance = Number(walletBalance) + Number(ammount)
+        const newBalance = Number(walletBalance) + Number(amount)
         
         const result = await db.update(wallets)
             .set({
