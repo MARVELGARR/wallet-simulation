@@ -50,12 +50,12 @@ const start = async (): Promise<void> => {
 // ─────────────────────────────────────────────────────────────
 // GRACEFUL SHUTDOWN
 // ─────────────────────────────────────────────────────────────
-const shutdown = async (signal: string): Promise<void> => {
-    console.log(`[server] ${signal} received — shutting down gracefully...`);
-    process.exit(0);
-};
+// const shutdown = async (signal: string): Promise<void> => {
+//     console.log(`[server] ${signal} received — shutting down gracefully...`);
+//     process.exit(0);
+// };
 
-process.on("SIGTERM", () => shutdown("SIGTERM"));
-process.on("SIGINT",  () => shutdown("SIGINT"));
+// process.on("SIGTERM", () => shutdown("SIGTERM"));
+// process.on("SIGINT",  () => shutdown("SIGINT"));
 
 start();
