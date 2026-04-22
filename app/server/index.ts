@@ -19,10 +19,10 @@ import "../routers/events/withdrawer.event.js";
 // ── QStash Event Routes (MUST be mounted BEFORE express.json()) ──
 // QStash signature verification requires the raw body.
 // express.json() would consume it, so event routes go first.
-app.use("/api/v1", router);
 
 // ── Middleware ────────────────────────────────────────────────
 app.use(express.json());
+app.use("/api/v1", router);
 
 // ── Routes ────────────────────────────────────────────────────
 // All routes inside userRouter are accessible at /api/v1/...
