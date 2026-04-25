@@ -17,6 +17,7 @@ import { db } from "../settings/db.config.js";
 import "../routers/events/deposit.event.js";
 import "../routers/events/transfere.event.js";
 import "../routers/events/withdrawer.event.js";
+import { walletRouter } from "../routers/wallet.controller.js";
 
 // ── QStash Event Routes (MUST be mounted BEFORE express.json()) ──
 // QStash signature verification requires the raw body.
@@ -32,6 +33,7 @@ app.use("/api/v1", router);
 app.use("/api/v1", trial);
 app.use("/api/v1", tran_route);
 app.use("/api/v1", userRouter);
+app.use("/api/v1", walletRouter);
 
 router.get("/", (req, res)=>{
     res.send("wahala")
