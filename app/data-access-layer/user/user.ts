@@ -94,3 +94,30 @@ export const getAllUsers = async (): Promise<DalResult<{ id: string; name: strin
         return { success: false, error: "Database error fetching users.", code: "DB_ERROR" };
     }
 };
+
+// ─────────────────────────────────────────────────────────────
+// deleteUserById — removes a user (cascades to wallets & refresh_tokens)
+// ─────────────────────────────────────────────────────────────
+export const deleteUserById = async (
+    userId: string
+): Promise<DalResult<{ id: string; name: string; email: string }>> => {
+    try {
+        const result = await db
+            .delete(users)
+            .where(eq(users.id, userId))
+            .returning({
+                id: users.id,
+                name: users.name,
+                email: users.email,
+            });
+
+        if (result.length === 0) {
+            return { success: false, error: "User not found.", code: "USER_NOT_FOUND" };
+        }
+
+        return { success: true, data: result[0] };
+    } catch (err) {
+        console.error("[user-dal] DB error during deleteUserById:", err);
+        return { success: false, error: "Database error deleting user.", code: "DB_ERROR" };
+    }
+};
