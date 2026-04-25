@@ -1,4 +1,3 @@
-
 import "dotenv/config"; // loads .env before anything else runs
 
 import { app } from "../settings/app.config.js";
@@ -8,6 +7,8 @@ import { userRouter } from "../routers/auth.controller.js";
 import { trial } from "../routers/events/wallet.events.js";
 import { tran_route } from "../routers/transaction.controller.js";
 import "../routers/user.controller.js"; // Side-effect import to register user routes
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { db } from "../settings/db.config.js";
 
 // ── QStash Event Handlers ──────────────────────────────────────
 // These routes are called by QStash (not directly by clients).
@@ -42,6 +43,16 @@ const PORT = Number(process.env.PORT) || 3000;
 // SERVER BOOT
 // ─────────────────────────────────────────────────────────────
 const start = async (): Promise<void> => {
+    // Run pending Drizzle migrations (creates tables on first deploy)
+    try {
+        console.log("[server] Running database migrations...");
+        await migrate(db, { migrationsFolder: "./app/database/migrations" });
+        console.log("[server] ✅ Migrations complete");
+    } catch (err) {
+        console.error("[server] ❌ Migration failed:", err);
+        process.exit(1);
+    }
+
     app.listen(PORT, () => {
         console.log(`[server] Running on http://localhost:${PORT}`);
     });
