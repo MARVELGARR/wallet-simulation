@@ -52,6 +52,11 @@ export const DeleteWallet_Dal = async ({id}:{id: string}): Promise<CreateWalletD
     return TheDeletedWallet
 }
 
+export const GetAllWallets_Dal = async () => {
+    const result = await db.select().from(wallets);
+    return result;
+}
+
 // export const UpdatedWallet_Dal = async ({}: WalletPropIn) =>{
     
 // }

@@ -7,6 +7,7 @@ import { userRouter } from "../routers/auth.controller.js";
 import { trial } from "../routers/events/wallet.events.js";
 import { tran_route } from "../routers/transaction.controller.js";
 import "../routers/user.controller.js"; // Side-effect import to register user routes
+import "../routers/wallet.controller.js"; // Side-effect import to register wallet routes
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { db } from "../settings/db.config.js";
 
