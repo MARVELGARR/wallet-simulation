@@ -4,69 +4,75 @@ import { drizzle } from "drizzle-orm/node-postgres"
 
 dotenv.config()
 
-const isProduction = process.env.NODE_ENV === "production";
+// ─── Environment Detection ────────────────────────────────────
+// Render does NOT automatically set NODE_ENV.
+// We detect production by checking for NODE_ENV *or* the presence
+// of a connection-string env var that only exists on Render.
+const isProduction =
+    process.env.NODE_ENV === "production" ||
+    !!process.env.DATABASE_URL ||
+    !!process.env.INTERNAL_DATABASE_URL_PROD;
 
-// Use production credentials for Render, or local credentials for dev
-export const DATABASE_CREDENTIALS = isProduction ? {
-    host: process.env.PORT_PROD as string, // User labeled host as PORT_PROD
-    database: process.env.DATABASE_PROD as string,
-    user: process.env.USERNAME_PROD as string,
-    password: process.env.PASSWORD_PROD as string,
-    port: 5432,
-    ssl: { rejectUnauthorized: false } // Required for Render Postgres
-} : {
-    host: process.env.DB_HOST as string,
-    database: process.env.DB_NAME as string,
-    user: process.env.DB_USER as string,
-    password: process.env.DB_PASSWORD as string,
-    port: Number(process.env.DB_PORT) || 5432,
-    ssl: false
-};
+console.log(
+    `[db.config] Mode: ${isProduction ? "PRODUCTION" : "DEVELOPMENT"} ` +
+    `(NODE_ENV=${process.env.NODE_ENV ?? "<not set>"})`
+);
 
-// Initialize pool based on credentials
-let poolConnectionConfig;
+// ─── Build the Pool config ────────────────────────────────────
+let poolConnectionConfig: ConstructorParameters<typeof Pool>[0];
 
 if (isProduction) {
-    // 1. Try Internal URL (fastest)
-    // 2. Try External URL
-    // 3. Try standard DATABASE_URL (Render default)
-    const connectionString = 
-        process.env.INTERNAL_DATABASE_URL_PROD || 
-        process.env.EXTERNAL_DATABASE_URL_PROD || 
-        process.env.DATABASE_URL;
+    // Priority order for Render:
+    // 1. DATABASE_URL        — Render auto-injects this when you link a DB
+    // 2. INTERNAL_DATABASE_URL_PROD — your custom internal URL
+    // 3. EXTERNAL_DATABASE_URL_PROD — your custom external URL
+    // 4. Individual credentials (PORT_PROD, DATABASE_PROD, etc.)
+    const connectionString =
+        process.env.DATABASE_URL ||
+        process.env.INTERNAL_DATABASE_URL_PROD ||
+        process.env.EXTERNAL_DATABASE_URL_PROD ||
+        "";
 
     if (connectionString) {
+        console.log("[db.config] Using connection string");
         poolConnectionConfig = {
             connectionString,
-            ssl: { rejectUnauthorized: false }
+            ssl: { rejectUnauthorized: false },
         };
     } else {
-        // 4. Fallback to individual credentials
+        console.log("[db.config] Using individual credentials");
         poolConnectionConfig = {
-            ...DATABASE_CREDENTIALS,
-            ssl: { rejectUnauthorized: false }
+            host: process.env.PORT_PROD as string,
+            database: process.env.DATABASE_PROD as string,
+            user: process.env.USERNAME_PROD as string,
+            password: process.env.PASSWORD_PROD as string,
+            port: 5432,
+            ssl: { rejectUnauthorized: false },
         };
     }
 } else {
-    // Local dev
-    poolConnectionConfig = { ...DATABASE_CREDENTIALS };
+    // Local development — no SSL
+    poolConnectionConfig = {
+        host: process.env.DB_HOST as string,
+        database: process.env.DB_NAME as string,
+        user: process.env.DB_USER as string,
+        password: process.env.DB_PASSWORD as string,
+        port: Number(process.env.DB_PORT) || 5432,
+        ssl: false,
+    };
 }
 
 const pool = new Pool(poolConnectionConfig);
-
-
 const db = drizzle(pool)
 
 const connectDb = async () => {
     try {
         await pool.connect();
-        
-        console.log("Database connected");
+        console.log("[db.config] ✅ Database connected");
     } catch (error) {
-        console.log("error");
+        console.error("[db.config] ❌ Database connection failed:", error);
     }
 }
-
 
 export {
     pool,

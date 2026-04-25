@@ -28,20 +28,30 @@ services:
       - key: PORT
         value: 3000
 
-      # ── Database (set in Render dashboard) ──────────────────
-      - key: DB_HOST
-        sync: false        # means: must be set manually in dashboard
-      - key: DB_PORT
-        value: 5432
-      - key: DB_USER
+      # ── Database ──────────────────────────────────────────────
+      # If you link a Render Postgres DB, DATABASE_URL is auto-injected.
+      # Otherwise, set it manually in the Dashboard.
+      - key: DATABASE_URL
         sync: false
-      - key: DB_PASSWORD
+
+      # Fallback individual credentials (only needed if DATABASE_URL is not set)
+      - key: INTERNAL_DATABASE_URL_PROD
         sync: false
-      - key: DB_NAME
+      - key: EXTERNAL_DATABASE_URL_PROD
+        sync: false
+      - key: PORT_PROD
+        sync: false
+      - key: DATABASE_PROD
+        sync: false
+      - key: USERNAME_PROD
+        sync: false
+      - key: PASSWORD_PROD
         sync: false
 
       # ── Auth (set in Render dashboard) ──────────────────────
       - key: JWT_SECRET
+        sync: false
+      - key: JWT_SECRET_PROD
         sync: false
 
       # ── QStash (set in Render dashboard) ────────────────────
