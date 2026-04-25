@@ -3,6 +3,7 @@ import { Registration } from "../../data-access-layer/auth/auth.js";
 import { hashPassword } from "./bcrypt.util.js";
 import { signAccessToken, signRefreshToken } from "./jwt.util.js";
 import { saveRefreshToken } from "../../data-access-layer/auth/refresh-token.js";
+import { client } from "../../settings/upstach.qstach.config.js";
 
 
 // ─────────────────────────────────────────────────────────────
@@ -63,6 +64,7 @@ interface RegisterSuccessPayload {
 //   2. Hash the password with bcrypt
 //   3. Persist the user via the data-access layer
 //   4. Sign and return a JWT
+//   5. Publish QStash event to create wallet
 // ─────────────────────────────────────────────────────────────
 export const RegisterUser = async (
     rawInput: unknown  // <-- accept `unknown` so this function is safe to call from anywhere
@@ -139,7 +141,21 @@ export const RegisterUser = async (
         return { success: false, error: "Could not generate session token. Please try again." };
     }
 
-    // ── Step 5: Return success with sanitised user data ──────
+    // ── Step 5: Publish QStash event to create wallet ────────
+    // Fire-and-forget: wallet creation happens asynchronously.
+    // If QStash is down, user is still registered — wallet can be created later.
+    try {
+        await client.publishJSON({
+            url: `${process.env.APP_BASE_URL}/api/v1/create-wallet-events`,
+            body: { id: newUser.id },
+        });
+        console.log(`[auth-service] ✅ Wallet creation event published for user ${newUser.id}`);
+    } catch (err) {
+        // Don't fail registration if wallet event fails — log and move on
+        console.warn("[auth-service] ⚠️ Could not publish wallet creation event:", err);
+    }
+
+    // ── Step 6: Return success with sanitised user data ──────
     return {
         success: true,
         data: {
