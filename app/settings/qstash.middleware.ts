@@ -1,15 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { Receiver } from "@upstash/qstash";
 import express from "express";
+import { receiver } from "./upstach.qstach.config.js";
 
-// ─────────────────────────────────────────────────────────────
-// QStash Receiver — verifies the upstash-signature header
-// using the signing keys from your Upstash dashboard.
-// ─────────────────────────────────────────────────────────────
-const receiver = new Receiver({
-    currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY!,
-    nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY!,
-});
+// Receiver is imported from the centralized QStash config
+// (upstach.qstach.config.ts) — single source of truth for signing keys.
 
 
 // ─────────────────────────────────────────────────────────────
