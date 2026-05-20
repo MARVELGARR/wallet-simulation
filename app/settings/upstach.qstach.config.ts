@@ -4,15 +4,25 @@ import { Client, Receiver } from "@upstash/qstash";
 // QStash Client — used to publish messages / events
 // Token is read from QSTASH_TOKEN env var (set in .env)
 // ─────────────────────────────────────────────────────────────
-// Helper to strip surrounding quotes (Docker --env-file keeps them)
 // Helper to strip whitespace, carriage returns, and surrounding quotes
-const clean = (val: string | undefined) => {
+const clean = (val: string | undefined): string | undefined => {
   if (!val) return val;
   // 1. Trim invisible spaces, newlines (\n), and Windows carriage returns (\r)
   const trimmed = val.trim(); 
   // 2. Safely strip leading/trailing quotes if they exist
   return trimmed.replace(/^["']|["']$/g, '');
-};;
+};
+
+// --- Determine Public App URL ---
+const isProd = process.env.NODE_ENV === "production";
+const cleanedAppUrl = clean(process.env.APP_BASE_URL);
+
+// Exported for use in all publishJSON calls
+export const PUBLIC_APP_URL = cleanedAppUrl 
+    ? cleanedAppUrl 
+    : isProd 
+        ? "https://wallet-simulation.onrender.com" 
+        : `http://localhost:${process.env.PORT || 3000}`;
 
 export const client = new Client({
     token: clean(process.env.QSTASH_TOKEN)!,

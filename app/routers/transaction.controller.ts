@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { router } from "../settings/router.config.js";
 import { transactions, TransactionType, WalletInsert, wallets, WalletType } from "../database/schema.js";
-import { client } from "../settings/upstach.qstach.config.js";
+import { client, PUBLIC_APP_URL } from "../settings/upstach.qstach.config.js";
 import { db } from "../settings/db.config.js";
 import { eq } from "drizzle-orm";
 import { NotFoundError } from "../settings/errorPerser.js";
@@ -40,7 +40,7 @@ router.post("/deposit-transac", async (req: Request, res: Response) => {
 
             // 3. Publish to QStash to process the deposit asynchronously
             await client.publishJSON({
-                url: `${process.env.APP_BASE_URL}/api/v1/deposit_event`, 
+                url: `${PUBLIC_APP_URL}/api/v1/deposit_event`, 
                 body: {
                     transactionId: newTransaction.id,
                     
@@ -95,7 +95,7 @@ router.post("/transfer-money-transac", async (req: Request, res: Response) => {
 
             // 2. Publish to QStash to process the transfer asynchronously
             await client.publishJSON({
-                url: `${process.env.APP_BASE_URL}/api/v1/transfer_event`,
+                url: `${PUBLIC_APP_URL}/api/v1/transfer_event`,
                 body: {
                     transactionId: newTransaction.id,
                     senderWalletId: newTransaction.senderWalletId,
@@ -149,7 +149,7 @@ router.post("/withdrawer-money-transc", async (req: Request, res:Response)=>{
             .returning()
             // 2. Publish to QStash to process the withdrawal asynchronously
             await client.publishJSON({
-                url: `${process.env.APP_BASE_URL}/api/v1/withdraw_event`,
+                url: `${PUBLIC_APP_URL}/api/v1/withdraw_event`,
                 body: {
                     transactionId: newTransaction.id,
                     userId: userId
