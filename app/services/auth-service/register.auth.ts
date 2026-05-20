@@ -146,7 +146,7 @@ export const RegisterUser = async (
     // If QStash is down, user is still registered — wallet can be created later.
     try {
         await client.publishJSON({
-            url: `${process.env.APP_BASE_URL}/api/v1/create-wallet-events`,
+            url: `${process.env.APP_BASE_URL?.replace(/^["'](.+)["']$/, '$1')}/api/v1/create-wallet-events`,
             body: { id: newUser.id },
         });
         console.log(`[auth-service] ✅ Wallet creation event published for user ${newUser.id}`);

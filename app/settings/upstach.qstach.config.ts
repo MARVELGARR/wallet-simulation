@@ -4,8 +4,12 @@ import { Client, Receiver } from "@upstash/qstash";
 // QStash Client — used to publish messages / events
 // Token is read from QSTASH_TOKEN env var (set in .env)
 // ─────────────────────────────────────────────────────────────
+// Helper to strip surrounding quotes (Docker --env-file keeps them)
+const clean = (val: string | undefined) => val?.replace(/^["'](.+)["']$/, '$1');
+
 export const client = new Client({
-    token: process.env.QSTASH_TOKEN!,
+    token: clean(process.env.QSTASH_TOKEN)!,
+    baseUrl: clean(process.env.QSTASH_URL),
 });
 
 // ─────────────────────────────────────────────────────────────
@@ -13,8 +17,8 @@ export const client = new Client({
 // using the signing keys from your Upstash dashboard.
 // ─────────────────────────────────────────────────────────────
 export const receiver = new Receiver({
-    currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY!,
-    nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY!,
+    currentSigningKey: clean(process.env.QSTASH_CURRENT_SIGNING_KEY)!,
+    nextSigningKey: clean(process.env.QSTASH_NEXT_SIGNING_KEY)!,
 });
 
 // ─────────────────────────────────────────────────────────────
