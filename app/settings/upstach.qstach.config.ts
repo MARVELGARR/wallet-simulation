@@ -5,7 +5,14 @@ import { Client, Receiver } from "@upstash/qstash";
 // Token is read from QSTASH_TOKEN env var (set in .env)
 // ─────────────────────────────────────────────────────────────
 // Helper to strip surrounding quotes (Docker --env-file keeps them)
-const clean = (val: string | undefined) => val?.replace(/^["'](.+)["']$/, '$1');
+// Helper to strip whitespace, carriage returns, and surrounding quotes
+const clean = (val: string | undefined) => {
+  if (!val) return val;
+  // 1. Trim invisible spaces, newlines (\n), and Windows carriage returns (\r)
+  const trimmed = val.trim(); 
+  // 2. Safely strip leading/trailing quotes if they exist
+  return trimmed.replace(/^["']|["']$/g, '');
+};;
 
 export const client = new Client({
     token: clean(process.env.QSTASH_TOKEN)!,
