@@ -4,33 +4,31 @@ import { app } from "../settings/app.config.js";
 import express from "express";
 import { router } from "../settings/router.config.js";
 import { userRouter } from "../routers/auth.controller.js";
-import { trial } from "../routers/events/wallet.events.js";
 import { tran_route } from "../routers/transaction.controller.js";
 import "../routers/user.controller.js"; // Side-effect import to register user routes
 import "../routers/wallet.controller.js"; // Side-effect import to register wallet routes
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { db } from "../settings/db.config.js";
 
+import { eventRouter } from "../settings/qstash.router.js";
+
 // ── QStash Event Handlers ──────────────────────────────────────
 // These routes are called by QStash (not directly by clients).
-// Each is protected by the verifyQStash signature middleware.
+// IMPORTANT: These MUST be mounted BEFORE express.json() so 
+// the signature verification can access the raw body.
 import "../routers/events/deposit.event.js";
 import "../routers/events/transfere.event.js";
 import "../routers/events/withdrawer.event.js";
+import "../routers/events/wallet.events.js";
 import { walletRouter } from "../routers/wallet.controller.js";
 
-// ── QStash Event Routes (MUST be mounted BEFORE express.json()) ──
-// QStash signature verification requires the raw body.
-// express.json() would consume it, so event routes go first.
+app.use("/api/v1", eventRouter);
 
-// ── Middleware ────────────────────────────────────────────────
+// ── Standard Middleware ───────────────────────────────────────
 app.use(express.json());
-app.use("/api/v1", router);
 
-// ── Routes ────────────────────────────────────────────────────
-// All routes inside userRouter are accessible at /api/v1/...
-// e.g. POST /api/v1/auth/register
-app.use("/api/v1", trial);
+// ── Standard API Routes ───────────────────────────────────────
+app.use("/api/v1", router);
 app.use("/api/v1", tran_route);
 app.use("/api/v1", userRouter);
 app.use("/api/v1", walletRouter);

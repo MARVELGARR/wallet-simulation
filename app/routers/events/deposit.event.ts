@@ -3,7 +3,7 @@
 
 
 import { Request, Response } from "express";
-import { router } from "../../settings/router.config.js";
+import { eventRouter } from "../../settings/qstash.router.js";
 import { wallets, transactions } from "../../database/schema.js";
 import { db } from "../../settings/db.config.js";
 import { eq } from "drizzle-orm";
@@ -11,7 +11,7 @@ import { CompleteDeposit } from "../../services/payment-service/transaction.serv
 import { NotFoundError } from "../../settings/errorPerser.js";
 import { rawBodyParser, verifyQStash } from "../../settings/qstash.middleware.js";
 
-router.post("/deposit_event", rawBodyParser, verifyQStash, async (req: Request, res: Response) => {
+eventRouter.post("/deposit_event", rawBodyParser, verifyQStash, async (req: Request, res: Response) => {
     const { transactionId} = req.body;
 
     try {

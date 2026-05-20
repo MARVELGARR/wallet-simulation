@@ -1,13 +1,13 @@
 
 import { Request, Response } from "express";
-import { router } from "../../settings/router.config.js";
+import { eventRouter } from "../../settings/qstash.router.js";
 import { Create_Wallet_Services } from "../../services/wallet-service/create-wallet.js";
 import { rawBodyParser, verifyQStash } from "../../settings/qstash.middleware.js";
 
 
 
 
-router.post('/create-wallet-events', rawBodyParser, verifyQStash, async (req: Request, res: Response) => {
+eventRouter.post('/create-wallet-events', rawBodyParser, verifyQStash, async (req: Request, res: Response) => {
     try {
         // 1. Basic Validation (In industry, use Zod here)
         const { id, } = req.body;
@@ -41,5 +41,5 @@ router.post('/create-wallet-events', rawBodyParser, verifyQStash, async (req: Re
 
 
 export {
-    router as trial
+    eventRouter as trial
 }

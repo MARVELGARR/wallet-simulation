@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { router } from "../../settings/router.config.js";
+import { eventRouter } from "../../settings/qstash.router.js";
 import { Withdraw_Money_service } from "../../services/payment-service/transaction.service.withdrawer.js";
 import { db } from "../../settings/db.config.js";
 import { transactions } from "../../database/schema.js";
@@ -9,7 +9,7 @@ import { rawBodyParser, verifyQStash } from "../../settings/qstash.middleware.js
 
 
 
-router.post("/withdraw_event", rawBodyParser, verifyQStash, async (req: Request, res: Response) => {
+eventRouter.post("/withdraw_event", rawBodyParser, verifyQStash, async (req: Request, res: Response) => {
     const { transactionId, userId} = req.body;
 
     try{
