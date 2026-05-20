@@ -173,6 +173,21 @@ router.post("/withdrawer-money-transc", async (req: Request, res:Response)=>{
 
 })
 
+router.get("/transactions/:id", async (req: Request, res: Response) => {
+    try {
+        const [transaction] = await db.select()
+            .from(transactions)
+            .where(eq(transactions.id, req.params.id as string));
+
+        if (!transaction) return res.status(404).json({ message: "Transaction not found" });
+
+        return res.json(transaction);
+    } catch (error) {
+        console.error("[Transaction_Status] Error:", error);
+        return res.status(500).json({ message: "Error fetching transaction status" });
+    }
+});
+
 
 export {
     router as tran_route

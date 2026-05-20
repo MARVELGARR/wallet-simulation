@@ -27,7 +27,11 @@ export const Withdraw_Dal = async ({transactionId}: {transactionId: string}) =>{
                 throw new NotFoundError("wallet to be Withdrawened from not found")
             }
 
-            const newBalance = Number(walletRedrawnedFrom.balance) + Number(transaction.amount)
+            if (Number(walletRedrawnedFrom.balance) < Number(transaction.amount)) {
+                throw new Error("Insufficient funds for withdrawal");
+            }
+
+            const newBalance = Number(walletRedrawnedFrom.balance) - Number(transaction.amount)
 
             const [updatedWallet] = await tcx.update(wallets).set({
                 balance: newBalance.toFixed(12)

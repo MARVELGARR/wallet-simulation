@@ -13,7 +13,7 @@ eventRouter.post("/withdraw_event", rawBodyParser, verifyQStash, async (req: Req
     const { transactionId, userId} = req.body;
 
     try{
-        const withdrawerRsult = await Withdraw_Money_service(transactionId)
+        const withdrawerRsult = await Withdraw_Money_service({ transactionId })
 
         if(!withdrawerRsult.success){
             throw new Error(withdrawerRsult.error);
