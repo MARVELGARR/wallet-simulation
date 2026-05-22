@@ -1,8 +1,10 @@
 import { revokeRefreshToken, revokeAllUserTokens } from "../../data-access-layer/auth/refresh-token.js";
 
-type ServiceSuccess = { success: true };
+
+
+type ServiceSuccess<T> = { success: true, data?: T };
 type ServiceError = { success: false; error: string };
-type ServiceResult = ServiceSuccess | ServiceError;
+type ServiceResult<T> = ServiceSuccess<T> | ServiceError;
 
 /**
  * LOGOUT SERVICE
@@ -11,7 +13,7 @@ type ServiceResult = ServiceSuccess | ServiceError;
  */
 export const Logout = async (
     refreshToken: string
-): Promise<ServiceResult> => {
+): Promise<ServiceResult<{success: boolean}>> => {
     try {
         await revokeRefreshToken(refreshToken);
         return { success: true };
@@ -28,7 +30,7 @@ export const Logout = async (
  */
 export const LogoutAll = async (
     userId: string
-): Promise<ServiceResult> => {
+): Promise<ServiceResult<{success: boolean}>> => {
     try {
         await revokeAllUserTokens(userId);
         return { success: true };

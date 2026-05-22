@@ -10,6 +10,8 @@ import { db } from "../../settings/db.config.js";
 // These are the exact fields we need to insert a new user.
 // We keep this lean — no full RegisterUserInput needed here.
 // ─────────────────────────────────────────────────────────────
+
+ type ErrorCode = "DB_NO_RESULT" | "DB_ERROR" | "EMAIL_TAKEN"
 interface NewUserData {
     name:     string;
     email:    string;
@@ -19,7 +21,7 @@ interface NewUserData {
 // DAL response uses a discriminated union — lets callers do proper
 // type-safe error handling without throwing exceptions across layers.
 export type DalSuccess<T> = { success: true; data: T };
-export type DalError    = { success: false; error: string; code?: string };
+export type DalError    = { success: false; error: string; code?: ErrorCode };
 export type DalResult<T> = DalSuccess<T> | DalError;
 
 // ─────────────────────────────────────────────────────────────
@@ -68,7 +70,7 @@ export const Registration = async (
                 id:    users.id,
                 name:  users.name,
                 email: users.email,
-                // NOTE: we deliberately do NOT return `password` to avoid
+                // NOTE: I deliberately do NOT return `password` to avoid
                 // accidentally leaking it up through the response chain
             });
 
@@ -86,3 +88,7 @@ export const Registration = async (
 
     return { success: true, data: inserted };
 };
+
+
+
+type errorCode = "DB_NO_RESULT" | "DB_ERROR"

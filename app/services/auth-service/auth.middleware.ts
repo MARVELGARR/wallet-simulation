@@ -1,3 +1,5 @@
+
+
 import { Request, Response, NextFunction } from "express";
 import { verifyToken, JwtPayload } from "./jwt.util.js";
 
@@ -16,6 +18,7 @@ export interface AuthenticatedRequest extends Request {
  * Middleware that requires a valid JWT in the Authorization header.
  * Expected format: Authorization: Bearer <token>
  */
+
 export const requireAuth = (
     req: AuthenticatedRequest,
     res: Response,
