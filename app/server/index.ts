@@ -11,6 +11,7 @@ import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { db } from "../settings/db.config.js";
 
 import { eventRouter } from "../settings/qstash.router.js";
+import { serverLogger } from "../settings/logger.js";
 
 // ── QStash Event Handlers ──────────────────────────────────────
 // These routes are called by QStash (not directly by clients).
@@ -46,16 +47,16 @@ const PORT = Number(process.env.PORT) || 3000;
 const start = async (): Promise<void> => {
     // Run pending Drizzle migrations (creates tables on first deploy)
     try {
-        console.log("[server] Running database migrations...");
+        serverLogger.info("Running database migrations...");
         await migrate(db, { migrationsFolder: "./app/database/migrations" });
-        console.log("[server] ✅ Migrations complete");
+        serverLogger.info("✅ Migrations complete");
     } catch (err) {
-        console.error("[server] ❌ Migration failed:", err);
+        serverLogger.fatal({ err }, "❌ Migration failed");
         process.exit(1);
     }
 
     app.listen(PORT, () => {
-        console.log(`[server] Running on http://localhost:${PORT}`);
+        serverLogger.info(`🚀 Running on http://localhost:${PORT}`);
     });
 };
 
@@ -63,7 +64,7 @@ const start = async (): Promise<void> => {
 // GRACEFUL SHUTDOWN
 // ─────────────────────────────────────────────────────────────
 const shutdown = async (signal: string): Promise<void> => {
-    console.log(`[server] ${signal} received — shutting down gracefully...`);
+    serverLogger.warn(`${signal} received — shutting down gracefully...`);
     process.exit(0);
 };
 

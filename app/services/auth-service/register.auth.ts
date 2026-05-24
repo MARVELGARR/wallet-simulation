@@ -4,6 +4,7 @@ import { hashPassword } from "./bcrypt.util.js";
 import { signAccessToken, signRefreshToken } from "./jwt.util.js";
 import { saveRefreshToken } from "../../data-access-layer/auth/refresh-token.js";
 import { client, PUBLIC_APP_URL } from "../../settings/upstach.qstach.config.js";
+import { authLogger } from "../../settings/logger.js";
 
 
 // ─────────────────────────────────────────────────────────────
@@ -91,7 +92,7 @@ export const RegisterUser = async (
         hashedPassword = await hashPassword(password);
     } catch (err) {
         // This should be very rare, but we guard it just in case
-        console.error("[auth-service] bcrypt hashing failed:", err);
+        authLogger.error({ err }, "bcrypt hashing failed");
         return { success: false, error: "Could not process password. Please try again." };
     }
 
@@ -137,7 +138,7 @@ export const RegisterUser = async (
         });
 
     } catch (err) {
-        console.error("[auth-service] Token generation failed:", err);
+        authLogger.error({ err }, "Token generation failed");
         return { success: false, error: "Could not generate session token. Please try again." };
     }
 
@@ -149,10 +150,10 @@ export const RegisterUser = async (
             url: `${PUBLIC_APP_URL}/api/v1/create-wallet-events`,
             body: { id: newUser.id },
         });
-        console.log(`[auth-service] ✅ Wallet creation event published for user ${newUser.id}`);
+        authLogger.info({ userId: newUser.id }, "Wallet creation event published");
     } catch (err) {
         // Don't fail registration if wallet event fails — log and move on
-        console.warn("[auth-service] ⚠️ Could not publish wallet creation event:", err);
+        authLogger.warn({ err }, "Could not publish wallet creation event");
     }
 
     // ── Step 6: Return success with sanitised user data ──────

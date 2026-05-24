@@ -5,6 +5,7 @@ import { db } from "../../settings/db.config.js";
 import { transactions } from "../../database/schema.js";
 import { eq } from "drizzle-orm";
 import { rawBodyParser, verifyQStash } from "../../settings/qstash.middleware.js";
+import { eventLogger } from "../../settings/logger.js";
 
 
 
@@ -26,7 +27,7 @@ eventRouter.post("/withdraw_event", rawBodyParser, verifyQStash, async (req: Req
         return res.status(200).json({ success: true, message: "withdrawer processed successfully" });
     }
     catch(error){
-         console.error("[Withdrawer_Event_Handler] Error:", error);
+         eventLogger.error({ err: error, transactionId }, "Withdraw event processing failed");
         
         // 3. Mark the transaction record as failed
         await db.update(transactions)

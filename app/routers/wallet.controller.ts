@@ -4,6 +4,7 @@ import { GetAllWalletsService } from "../services/wallet-service/get-wallets.js"
 import { db } from "../settings/db.config.js";
 import { wallets } from "../database/schema.js";
 import { eq } from "drizzle-orm";
+import { walletLogger } from "../settings/logger.js";
 
 /**
  * GET /wallets
@@ -25,7 +26,7 @@ router.get("/wallets", async (req: Request, res: Response) => {
             error: result.error,
         });
     } catch (error) {
-        console.error("[wallet-controller] Error:", error);
+        walletLogger.error({ err: error }, "Error in GET /wallets");
         return res.status(500).json({
             success: false,
             error: "An unexpected error occurred.",
@@ -43,7 +44,7 @@ router.get("/wallets/user/:userId", async (req: Request, res: Response) => {
 
         return res.json(wallet);
     } catch (error) {
-        console.error("[Wallet_Status] Error:", error);
+        walletLogger.error({ err: error }, "Error in GET /wallets/user/:userId");
         return res.status(500).json({ message: "Error fetching wallet status" });
     }
 });

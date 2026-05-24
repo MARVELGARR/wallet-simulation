@@ -1,4 +1,5 @@
 import { revokeRefreshToken, revokeAllUserTokens } from "../../data-access-layer/auth/refresh-token.js";
+import { authLogger } from "../../settings/logger.js";
 
 
 
@@ -18,7 +19,7 @@ export const Logout = async (
         await revokeRefreshToken(refreshToken);
         return { success: true };
     } catch (err) {
-        console.error("[logout.service] Logout failed:", err);
+        authLogger.error({ err }, "Logout failed");
         return { success: false, error: "Logout failed." };
     }
 };
@@ -35,7 +36,7 @@ export const LogoutAll = async (
         await revokeAllUserTokens(userId);
         return { success: true };
     } catch (err) {
-        console.error("[logout.service] Global logout failed:", err);
+        authLogger.error({ err }, "Global logout failed");
         return { success: false, error: "Global logout failed." };
     }
 };

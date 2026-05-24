@@ -6,6 +6,7 @@ import { db } from "../../settings/db.config.js";
 import { eq } from "drizzle-orm";
 import { CompleteTransfer } from "../../services/payment-service/transaction.erviece..transer.js";
 import { rawBodyParser, verifyQStash } from "../../settings/qstash.middleware.js";
+import { eventLogger } from "../../settings/logger.js";
 
 
 eventRouter.post("/transfer_event", rawBodyParser, verifyQStash, async (req: Request, res: Response) => {
@@ -32,7 +33,7 @@ eventRouter.post("/transfer_event", rawBodyParser, verifyQStash, async (req: Req
         return res.status(200).json({ success: true, message: "Transfer processed successfully" });
 
     } catch (error: any) {
-        console.error("[Transfer_Event_Handler] Error:", error);
+        eventLogger.error({ err: error, transactionId }, "Transfer event processing failed");
         
         // 3. Mark the transaction record as failed
         await db.update(transactions)

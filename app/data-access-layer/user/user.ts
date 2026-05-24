@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { users } from "../../database/schema.js";
 import { db } from "../../settings/db.config.js";
+import { dbLogger } from "../../settings/logger.js";
 
 // ─────────────────────────────────────────────────────────────
 // LOCAL TYPES
@@ -32,7 +33,7 @@ export const findUserByEmail = async (
             .where(eq(users.email, email))
             .limit(1);
     } catch (err) {
-        console.error("[user-dal] DB error during findUserByEmail:", err);
+        dbLogger.error({ err }, "DB error during findUserByEmail");
         return { success: false, error: "Database error during user lookup.", code: "DB_ERROR" };
     }
 
@@ -62,7 +63,7 @@ export const findUserById = async (
             .where(eq(users.id, userId))
             .limit(1);
     } catch (err) {
-        console.error("[user-dal] DB error during findUserById:", err);
+        dbLogger.error({ err }, "DB error during findUserById");
         return { success: false, error: "Database error during user lookup.", code: "DB_ERROR" };
     }
 
@@ -90,7 +91,7 @@ export const getAllUsers = async (): Promise<DalResult<{ id: string; name: strin
 
         return { success: true, data: result };
     } catch (err) {
-        console.error("[user-dal] DB error during getAllUsers:", err);
+        dbLogger.error({ err }, "DB error during getAllUsers");
         return { success: false, error: "Database error fetching users.", code: "DB_ERROR" };
     }
 };
@@ -117,7 +118,7 @@ export const deleteUserById = async (
 
         return { success: true, data: result[0] };
     } catch (err) {
-        console.error("[user-dal] DB error during deleteUserById:", err);
+        dbLogger.error({ err }, "DB error during deleteUserById");
         return { success: false, error: "Database error deleting user.", code: "DB_ERROR" };
     }
 };

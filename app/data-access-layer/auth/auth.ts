@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm";
 import { users } from "../../database/schema.js";
 import { db } from "../../settings/db.config.js";
+import { dbLogger } from "../../settings/logger.js";
 
 // ─────────────────────────────────────────────────────────────
 // LOCAL TYPES
@@ -47,7 +48,7 @@ export const Registration = async (
             .where(eq (users.email, userData.email))
             .limit(1);
     } catch (err) {
-        console.error("[auth-dal] DB error during email uniqueness check:", err);
+        dbLogger.error({ err }, "DB error during email uniqueness check");
         return { success: false, error: "Database error during registration check.", code: "DB_ERROR" };
     }
 
@@ -76,13 +77,13 @@ export const Registration = async (
 
         inserted = rows[0];
     } catch (err) {
-        console.error("[auth-dal] DB error during user insert:", err);
+        dbLogger.error({ err }, "DB error during user insert");
         return { success: false, error: "Failed to create user account.", code: "DB_ERROR" };
     }
 
     if (!inserted) {
         // INSERT returned no rows — unexpected, but we handle it defensively
-        console.error("[auth-dal] Insert succeeded but returned no rows.");
+        dbLogger.error("Insert succeeded but returned no rows");
         return { success: false, error: "User creation returned no data.", code: "DB_NO_RESULT" };
     }
 

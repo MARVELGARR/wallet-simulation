@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import express from "express";
 import { receiver } from "./upstach.qstach.config.js";
+import { qstashLogger } from "./logger.js";
 
 // Receiver is imported from the centralized QStash config
 // (upstach.qstach.config.ts) — single source of truth for signing keys.
@@ -31,6 +32,7 @@ export async function verifyQStash(
 
     // Guard: signature header must be present
     if (!signature) {
+        qstashLogger.warn("Missing upstash-signature header on incoming request");
         return res.status(401).json({
             message: "Unauthorized: missing upstash-signature header",
         });
@@ -48,9 +50,10 @@ export async function verifyQStash(
         // Re-attach parsed JSON so route handlers get req.body as an object
         req.body = JSON.parse(rawBody);
 
+        qstashLogger.debug("✅ QStash signature verified successfully");
         next();
     } catch (error) {
-        console.error("[QStash] Signature verification failed:", error);
+        qstashLogger.error({ err: error }, "Signature verification failed");
         return res.status(401).json({
             message: "Unauthorized: invalid QStash signature",
         });

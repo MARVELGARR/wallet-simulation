@@ -5,6 +5,7 @@ import { client, PUBLIC_APP_URL } from "../settings/upstach.qstach.config.js";
 import { db } from "../settings/db.config.js";
 import { eq } from "drizzle-orm";
 import { NotFoundError } from "../settings/errorPerser.js";
+import { transactionLogger } from "../settings/logger.js";
 
 
 
@@ -55,7 +56,7 @@ router.post("/deposit-transac", async (req: Request, res: Response) => {
 
     }
     catch (error) {
-        console.error("[Deposit_Controller] Error:", error)
+        transactionLogger.error({ err: error }, "Error in /deposit-transac");
         const parsedError = error instanceof NotFoundError ? error : { statusCode: 500, message: "transaction failed, something went wrong" }
         return res.status((parsedError as any).statusCode || 500).json({ 
             message: (parsedError as any).message 
@@ -111,7 +112,7 @@ router.post("/transfer-money-transac", async (req: Request, res: Response) => {
             });
         });
     } catch (error) {
-        console.error("[Transfere_Money_Controller] Error:", error)
+        transactionLogger.error({ err: error }, "Error in /transfer-money-transac");
         const parsedError = error instanceof NotFoundError ? error : { statusCode: 500, message: "transaction failed, something went wrong" }
         return res.status((parsedError as any).statusCode || 500).json({ 
             message: (parsedError as any).message 
@@ -164,7 +165,7 @@ router.post("/withdrawer-money-transc", async (req: Request, res:Response)=>{
 
     }
     catch(error){
-        console.error("[Transfer_Controller] Error:", error);
+        transactionLogger.error({ err: error }, "Error in /withdrawer-money-transc");
         const statusCode = (error as any).statusCode || 500;
         const message = (error as any).message || "Transaction failed, please try again later.";
         return res.status(statusCode).json({ message });
@@ -183,7 +184,7 @@ router.get("/transactions/:id", async (req: Request, res: Response) => {
 
         return res.json(transaction);
     } catch (error) {
-        console.error("[Transaction_Status] Error:", error);
+        transactionLogger.error({ err: error }, "Error in /transactions/:id");
         return res.status(500).json({ message: "Error fetching transaction status" });
     }
 });

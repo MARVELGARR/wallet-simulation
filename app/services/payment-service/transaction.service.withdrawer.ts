@@ -1,4 +1,5 @@
 import { Withdraw_Dal } from "../../data-access-layer/transaction/withdrawer.js";
+import { transactionLogger } from "../../settings/logger.js";
 
 
 
@@ -20,7 +21,7 @@ export const Withdraw_Money_service = async ({transactionId}: {transactionId: st
 
          return { success: true, data: result };
     } catch (error: any) {
-       console.error("[Transfer_Service] Critical Error:", error);
+       transactionLogger.error({ err: error }, "Critical Error during withdrawal processing");
         return { 
             success: false, 
             error: error.message || "Internal server error during withdrawl processing.", 

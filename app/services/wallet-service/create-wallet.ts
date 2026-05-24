@@ -2,6 +2,7 @@
 
 
 import { CreateWallet_Dal, CreateWalletDalPromise, WalletPropIn } from "../../data-access-layer/wallet/wallet.db.js"
+import { walletLogger } from "../../settings/logger.js";
 
 
 export type DalSuccess<T> = { success: true; data: T };
@@ -22,7 +23,7 @@ export const Create_Wallet_Services = async ({id}: WalletPropIn): Promise<DalRes
         return { success: true, data: newWallet };
     } catch (error) {
         // Log the actual error for debugging, return a friendly message to the UI
-        console.error("[Wallet_Service] Critical Error:", error);
+        walletLogger.error({ err: error }, "Critical Error during wallet creation");
         return { success: false, error: "Internal server error during wallet creation.", code: "INTERNAL_ERROR" };
     }
 };

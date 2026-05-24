@@ -10,6 +10,7 @@ import { eq } from "drizzle-orm";
 import { CompleteDeposit } from "../../services/payment-service/transaction.serviece.deposit.js";
 import { NotFoundError } from "../../settings/errorPerser.js";
 import { rawBodyParser, verifyQStash } from "../../settings/qstash.middleware.js";
+import { eventLogger } from "../../settings/logger.js";
 
 eventRouter.post("/deposit_event", rawBodyParser, verifyQStash, async (req: Request, res: Response) => {
     const { transactionId} = req.body;
@@ -50,7 +51,7 @@ eventRouter.post("/deposit_event", rawBodyParser, verifyQStash, async (req: Requ
 
 
     } catch (error) {
-        console.error("[Deposit_Event_Handler] Error:", error);
+        eventLogger.error({ err: error, transactionId }, "Deposit event processing failed");
         
         // Mark transaction as failed
         await db.update(transactions)

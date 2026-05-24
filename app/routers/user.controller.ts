@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { router } from "../settings/router.config.js";
 import { fetchAllUsers, fetchUserById, removeUserById } from "../services/user-service/user.get.js";
 import { requireAuth } from "../services/auth-service/auth.middleware.js";
+import { userLogger } from "../settings/logger.js";
 
 /**
  * GET /users
@@ -15,7 +16,7 @@ router.get("/users", async (req: Request, res: Response) => {
             data: users,
         });
     } catch (error: any) {
-        console.error("[user-controller] Error fetching users:", error);
+        userLogger.error({ err: error }, "Error fetching users");
         return res.status(500).json({
             success: false,
             error: "Something went wrong while fetching users. Please try again later.",
@@ -45,7 +46,7 @@ router.get("/users/:id", requireAuth, async (req: Request, res: Response) => {
             data: user,
         });
     } catch (error: any) {
-        console.error("[user-controller] Error fetching user by ID:", error);
+        userLogger.error({ err: error }, "Error fetching user by ID");
         const statusCode = error.message === "User not found." ? 404 : 500;
         return res.status(statusCode).json({
             success: false,
@@ -77,7 +78,7 @@ router.delete("/users/:id", async (req: Request, res: Response) => {
             data: deletedUser,
         });
     } catch (error: any) {
-        console.error("[user-controller] Error deleting user:", error);
+        userLogger.error({ err: error }, "Error deleting user");
         const statusCode = error.message === "User not found." ? 404 : 500;
         return res.status(statusCode).json({
             success: false,

@@ -3,6 +3,7 @@ import { comparePassword } from "./bcrypt.util.js";
 import { findUserByEmail } from "../../data-access-layer/user/user.js";
 import { signAccessToken, signRefreshToken } from "./jwt.util.js";
 import { saveRefreshToken } from "../../data-access-layer/auth/refresh-token.js";
+import { authLogger } from "../../settings/logger.js";
 
 
 
@@ -70,7 +71,7 @@ export const login = async (rawInput: LoginProp) => {
                 expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
             });
         } catch (err) {
-            console.error("[login.service] Failed to save refresh token:", err);
+            authLogger.error({ err }, "Failed to save refresh token");
             return { success: false, error: "Authentication failed due to session error." };
         }
 

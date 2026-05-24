@@ -8,6 +8,7 @@ import { login } from "../services/auth-service/login.auth.js";
 import { RefreshSession } from "../services/auth-service/refresh.auth.js";
 import { Logout } from "../services/auth-service/logout.auth.js";
 import { requireAuth, AuthenticatedRequest } from "../services/auth-service/auth.middleware.js";
+import { authLogger } from "../settings/logger.js";
 
 // ─────────────────────────────────────────────────────────────
 // USER CONTROLLER
@@ -74,7 +75,7 @@ router.post(
         } catch (err) {
             // Last-resort catch — should never reach here if service layer
             // is handling its own errors, but we never leave a request hanging.
-            console.error("[user.controller] Unhandled error in /auth/register:", err);
+            authLogger.error({ err }, "Unhandled error in /auth/register");
             res.status(500).json({
                 success: false,
                 error: "An unexpected error occurred. Please try again later.",
@@ -117,7 +118,7 @@ router.post("/auth/login", async (req: Request, res: Response): Promise<void> =>
             data:    result.data, // { user: { id, name, email }, accessToken, refreshToken }
         });
     } catch (error) {
-        console.error("[user.controller] Unhandled error in /auth/login:", error);
+        authLogger.error({ err: error }, "Unhandled error in /auth/login");
         res.status(500).json({
             success: false,
             error: "An unexpected error occurred. Please try again later.",
@@ -148,7 +149,7 @@ router.post("/auth/refresh", async (req: Request, res: Response): Promise<void> 
             data:    result.data, // { accessToken, refreshToken }
         });
     } catch (error) {
-        console.error("[user.controller] Unhandled error in /auth/refresh:", error);
+        authLogger.error({ err: error }, "Unhandled error in /auth/refresh");
         res.status(500).json({ success: false, error: "An unexpected error occurred." });
     }
 });
@@ -173,7 +174,7 @@ router.post("/auth/logout", async (req: Request, res: Response): Promise<void> =
 
         res.status(200).json({ success: true, message: "Logged out successfully." });
     } catch (error) {
-        console.error("[user.controller] Unhandled error in /auth/logout:", error);
+        authLogger.error({ err: error }, "Unhandled error in /auth/logout");
         res.status(500).json({ success: false, error: "An unexpected error occurred." });
     }
 });

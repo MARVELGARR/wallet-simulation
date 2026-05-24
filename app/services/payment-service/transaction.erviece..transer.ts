@@ -1,5 +1,5 @@
-
 import { Transfere_Dal, Transfere_Dal_prop } from "../../data-access-layer/transaction/transfere.js";
+import { transactionLogger } from "../../settings/logger.js";
 
 export type TransferSuccess<T> = { success: true; data: T };
 export type TransferError = { success: false; error: string; code?: string };
@@ -15,7 +15,7 @@ export const CompleteTransfer = async ({ senderWalletId, recieverWalletId, ammou
         
         return { success: true, data: result };
     } catch (error: any) {
-        console.error("[Transfer_Service] Critical Error:", error);
+        transactionLogger.error({ err: error }, "Critical Error during transfer processing");
         return { 
             success: false, 
             error: error.message || "Internal server error during transfer processing.", 

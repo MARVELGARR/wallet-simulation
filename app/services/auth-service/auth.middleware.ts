@@ -2,6 +2,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import { verifyToken, JwtPayload } from "./jwt.util.js";
+import { authLogger } from "../../settings/logger.js";
 
 // ─────────────────────────────────────────────────────────────
 // AUTH MIDDLEWARE
@@ -42,7 +43,7 @@ export const requireAuth = (
         req.user = payload;
         next();
     } catch (err) {
-        console.error("[auth.middleware] Token verification failed:", err);
+        authLogger.error({ err }, "Token verification failed");
         res.status(401).json({
             success: false,
             error: "Invalid or expired session. Please log in again.",

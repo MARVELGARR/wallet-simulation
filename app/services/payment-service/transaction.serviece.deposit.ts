@@ -2,6 +2,7 @@
 
 
 import { Deposit_Dal, Deposit_Dal_prop } from "../../data-access-layer/transaction/deposit.js";
+import { transactionLogger } from "../../settings/logger.js";
 
 
 
@@ -22,7 +23,7 @@ export const CompleteDeposit =  async ({amount, walletId, walletBalance, currenc
          return { success: true, data: result }
     }
     catch(error){
-         console.error("[Deposit_Service] Critical Error:", error);
+         transactionLogger.error({ err: error }, "Critical Error during Deposit creation");
         return { success: false, error: "Internal server error during Deposit creation.", code: "INTERNAL_ERROR" };
     }
 
