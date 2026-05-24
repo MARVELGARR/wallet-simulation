@@ -6,15 +6,15 @@
 # content-type: application/json
 
 # {
-#     "name": "marve",
-#     "email": "marvel@gmail.com",
+#     "name": "excel",
+#     "email": "excel@gmail.com",
 #     "password": "marvellous"
 # }
 
 
 # POST  https://wallet-simulation.onrender.com/api/v1/auth/login HTTP/1.1
 # content-type: application/json
-
+e
 # {
 #     "email": "marvel@gmail.com",
 #     "password": "marvellous"
@@ -40,14 +40,14 @@
 #     "walletId": "79782bfe-371e-4e1a-80a2-05de388a0a8c"
 # }
 
-POST  http://wallet-simulation.onrender.com/api/v1/withdrawer-money-transc HTTP/1.1
-content-type: application/json
+# POST  http://wallet-simulation.onrender.com/api/v1/withdrawer-money-transc HTTP/1.1
+# content-type: application/json
 
-{
-    "userId": "577bbb6a-c109-4a78-a81d-1eb0caad5d71",
-    "amount": 1000,
-    "WalletId": "79782bfe-371e-4e1a-80a2-05de388a0a8c"
-}
+# {
+#     "userId": "577bbb6a-c109-4a78-a81d-1eb0caad5d71",
+#     "amount": 1000,
+#     "WalletId": "79782bfe-371e-4e1a-80a2-05de388a0a8c"
+# }
 
 
 # ─── Status Checks (Async) ────────────────────────────────────
