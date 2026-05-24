@@ -27,6 +27,7 @@
   - [Layered Architecture](#layered-architecture)
   - [Request Lifecycle](#request-lifecycle)
   - [Event-Driven Architecture (EDA)](#event-driven-architecture-eda)
+  - [Structured Logging](#-structured-logging)
   - [Authentication Flow](#authentication-flow)
 - [Database Schema](#-database-schema)
   - [Entity Relationship Diagram](#entity-relationship-diagram)
@@ -94,6 +95,7 @@
 │  Validation  │  Zod v4                                   │
 │  Auth        │  JWT (jsonwebtoken) + bcrypt              │
 │  Events/MQ   │  Upstash QStash (HTTP-based message queue)│
+│  Logging     │  Pino (Structured JSON logs)              │
 │  Dev Server  │  tsx (watch mode, ESM support)            │
 │  Deployment  │  Render / Docker                          │
 └──────────────┴───────────────────────────────────────────┘
@@ -281,6 +283,30 @@ sequenceDiagram
 - **Signature verification:** Every incoming QStash webhook is verified using HMAC signatures (current + next signing key rotation).
 - **Transaction status tracking:** Transactions start as `pending`, then move to `completed` or `failed` after async processing.
 - **Row-level locking:** `SELECT ... FOR UPDATE` prevents race conditions when multiple events try to modify the same wallet.
+
+---
+
+### 📊 Structured Logging
+
+The application uses **Pino** for high-performance, structured JSON logging. This is crucial for production monitoring and debugging asynchronous event flows.
+
+**Key Features:**
+- **Context-Aware:** Child loggers are used for each module (`auth`, `db`, `wallet`, `event`, etc.), automatically tagging log lines with their source.
+- **Environment-Specific:**
+  - **Development:** Prints human-readable, colorized logs via `pino-pretty`.
+  - **Production:** Outputs raw JSON for efficient ingestion by log aggregators (e.g., Datadog, ELK, CloudWatch).
+- **Fatal Error Handling:** The server logs a `fatal` event and shuts down gracefully if migrations fail on startup.
+
+**Usage Example:**
+```typescript
+import { transactionLogger } from "../settings/logger.js";
+
+try {
+    // logic...
+} catch (err) {
+    transactionLogger.error({ err, txId: "..." }, "Transaction processing failed");
+}
+```
 
 ---
 
@@ -1044,6 +1070,7 @@ CMD [ "npm", "run", "dev" ]
 |---|---|---|---|
 | `NODE_ENV` | ❌ | `development` | `development` or `production` |
 | `PORT` | ❌ | `3000` | HTTP server port |
+| `LOG_LEVEL` | ❌ | `debug`/`info` | Minimum log level (`trace`, `debug`, `info`, `warn`, `error`, `fatal`) |
 | `DATABASE_URL` | ✅ | — | Neon PostgreSQL connection string (with `?sslmode=require`) |
 | `JWT_SECRET` | ✅ | — | Secret key for signing JWTs (development) |
 | `JWT_SECRET_PROD` | ✅ (prod) | — | Secret key for signing JWTs (production) |
