@@ -111,27 +111,27 @@ The system is composed of four main actors: the **Client**, the **API Server**, 
 
 ```mermaid
 graph TB
-    subgraph Client["🖥️ Client (Browser / Postman / Mobile)"]
+    subgraph Client["Client (Browser / Postman / Mobile)"]
         C[HTTP Requests]
     end
 
-    subgraph Server["⚙️ API Server (Express v5)"]
-        MW[Middleware Layer<br/>CORS • JSON Parser • Auth]
-        R[Router Layer<br/>Controllers]
-        S[Service Layer<br/>Business Logic • Validation]
-        DAL[Data Access Layer<br/>Drizzle ORM Queries]
-        EH[Event Handlers<br/>QStash Webhooks]
+    subgraph Server["API Server (Express v5)"]
+        MW["Middleware Layer\nCORS • JSON Parser • Auth"]
+        R["Router Layer\nControllers"]
+        S["Service Layer\nBusiness Logic • Validation"]
+        DAL["Data Access Layer\nDrizzle ORM Queries"]
+        EH["Event Handlers\nQStash Webhooks"]
     end
 
-    subgraph DB["🗄️ Neon PostgreSQL"]
+    subgraph DB["Neon PostgreSQL"]
         UT[users]
         RT[refresh_tokens]
         WT[wallets]
         TT[transactions]
     end
 
-    subgraph MQ["📨 Upstash QStash"]
-        Q[Message Queue<br/>HTTP Webhooks]
+    subgraph MQ["Upstash QStash"]
+        Q["Message Queue\nHTTP Webhooks"]
     end
 
     C -->|REST API| MW
