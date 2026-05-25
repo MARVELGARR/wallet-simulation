@@ -1,4 +1,4 @@
-<![CDATA[<div align="center">
+<div align="center">
 
 # 💰 Wallet Simulation API
 
@@ -1108,4 +1108,3 @@ ISC © **Marvellous Obatale**
 *This project is for learning purposes and is under active development.*
 
 </div>
-]]>
